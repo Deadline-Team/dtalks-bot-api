@@ -1,1 +1,1 @@
-# dtalks-bot-api
+# DTalks Bot API
