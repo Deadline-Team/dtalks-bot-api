@@ -4,7 +4,9 @@ package conversation
 
 import (
 	json "encoding/json"
-	authorization "github.com/deadline-team/dtalks-bot-api/model/authorization"
+	model "github.com/deadline-team/dtalks-bot-api/model"
+	attachment "github.com/deadline-team/dtalks-bot-api/model/attachment"
+	user "github.com/deadline-team/dtalks-bot-api/model/user"
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"
 	jwriter "github.com/mailru/easyjson/jwriter"
@@ -71,7 +73,7 @@ func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 				out.Avatar = nil
 			} else {
 				if out.Avatar == nil {
-					out.Avatar = new(authorization.Avatar)
+					out.Avatar = new(model.Avatar)
 				}
 				(*out.Avatar).UnmarshalEasyJSON(in)
 			}
@@ -95,9 +97,9 @@ func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 				out.Owner = nil
 			} else {
 				if out.Owner == nil {
-					out.Owner = new(authorization.User)
+					out.Owner = new(user.User)
 				}
-				(*out.Owner).UnmarshalEasyJSON(in)
+				easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelUser(in, out.Owner)
 			}
 		case "admins":
 			if in.IsNull() {
@@ -107,23 +109,23 @@ func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 				in.Delim('[')
 				if out.Admins == nil {
 					if !in.IsDelim(']') {
-						out.Admins = make([]*authorization.User, 0, 8)
+						out.Admins = make([]*user.User, 0, 8)
 					} else {
-						out.Admins = []*authorization.User{}
+						out.Admins = []*user.User{}
 					}
 				} else {
 					out.Admins = (out.Admins)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v2 *authorization.User
+					var v2 *user.User
 					if in.IsNull() {
 						in.Skip()
 						v2 = nil
 					} else {
 						if v2 == nil {
-							v2 = new(authorization.User)
+							v2 = new(user.User)
 						}
-						(*v2).UnmarshalEasyJSON(in)
+						easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelUser(in, v2)
 					}
 					out.Admins = append(out.Admins, v2)
 					in.WantComma()
@@ -138,23 +140,23 @@ func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 				in.Delim('[')
 				if out.Members == nil {
 					if !in.IsDelim(']') {
-						out.Members = make([]*authorization.User, 0, 8)
+						out.Members = make([]*user.User, 0, 8)
 					} else {
-						out.Members = []*authorization.User{}
+						out.Members = []*user.User{}
 					}
 				} else {
 					out.Members = (out.Members)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v3 *authorization.User
+					var v3 *user.User
 					if in.IsNull() {
 						in.Skip()
 						v3 = nil
 					} else {
 						if v3 == nil {
-							v3 = new(authorization.User)
+							v3 = new(user.User)
 						}
-						(*v3).UnmarshalEasyJSON(in)
+						easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelUser(in, v3)
 					}
 					out.Members = append(out.Members, v3)
 					in.WantComma()
@@ -169,23 +171,23 @@ func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 				in.Delim('[')
 				if out.MutedMembers == nil {
 					if !in.IsDelim(']') {
-						out.MutedMembers = make([]*authorization.User, 0, 8)
+						out.MutedMembers = make([]*user.User, 0, 8)
 					} else {
-						out.MutedMembers = []*authorization.User{}
+						out.MutedMembers = []*user.User{}
 					}
 				} else {
 					out.MutedMembers = (out.MutedMembers)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v4 *authorization.User
+					var v4 *user.User
 					if in.IsNull() {
 						in.Skip()
 						v4 = nil
 					} else {
 						if v4 == nil {
-							v4 = new(authorization.User)
+							v4 = new(user.User)
 						}
-						(*v4).UnmarshalEasyJSON(in)
+						easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelUser(in, v4)
 					}
 					out.MutedMembers = append(out.MutedMembers, v4)
 					in.WantComma()
@@ -216,7 +218,7 @@ func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 						if v5 == nil {
 							v5 = new(Message)
 						}
-						(*v5).UnmarshalEasyJSON(in)
+						easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation1(in, v5)
 					}
 					out.Messages = append(out.Messages, v5)
 					in.WantComma()
@@ -247,7 +249,7 @@ func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 						if v6 == nil {
 							v6 = new(Message)
 						}
-						(*v6).UnmarshalEasyJSON(in)
+						easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation1(in, v6)
 					}
 					out.Pinned = append(out.Pinned, v6)
 					in.WantComma()
@@ -282,7 +284,7 @@ func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 						if v7 == nil {
 							v7 = new(Message)
 						}
-						(*v7).UnmarshalEasyJSON(in)
+						easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation1(in, v7)
 					}
 					out.UnreadThread = append(out.UnreadThread, v7)
 					in.WantComma()
@@ -376,7 +378,7 @@ func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 		} else {
 			out.RawString(prefix)
 		}
-		(*in.Owner).MarshalEasyJSON(out)
+		easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelUser(out, *in.Owner)
 	}
 	if len(in.Admins) != 0 {
 		const prefix string = ",\"admins\":"
@@ -395,7 +397,7 @@ func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 				if v11 == nil {
 					out.RawString("null")
 				} else {
-					(*v11).MarshalEasyJSON(out)
+					easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelUser(out, *v11)
 				}
 			}
 			out.RawByte(']')
@@ -418,7 +420,7 @@ func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 				if v13 == nil {
 					out.RawString("null")
 				} else {
-					(*v13).MarshalEasyJSON(out)
+					easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelUser(out, *v13)
 				}
 			}
 			out.RawByte(']')
@@ -441,7 +443,7 @@ func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 				if v15 == nil {
 					out.RawString("null")
 				} else {
-					(*v15).MarshalEasyJSON(out)
+					easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelUser(out, *v15)
 				}
 			}
 			out.RawByte(']')
@@ -464,7 +466,7 @@ func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 				if v17 == nil {
 					out.RawString("null")
 				} else {
-					(*v17).MarshalEasyJSON(out)
+					easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation1(out, *v17)
 				}
 			}
 			out.RawByte(']')
@@ -487,7 +489,7 @@ func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 				if v19 == nil {
 					out.RawString("null")
 				} else {
-					(*v19).MarshalEasyJSON(out)
+					easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation1(out, *v19)
 				}
 			}
 			out.RawByte(']')
@@ -530,7 +532,7 @@ func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 				if v21 == nil {
 					out.RawString("null")
 				} else {
-					(*v21).MarshalEasyJSON(out)
+					easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation1(out, *v21)
 				}
 			}
 			out.RawByte(']')
@@ -561,4 +563,1364 @@ func (v *Conversation) UnmarshalJSON(data []byte) error {
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Conversation) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation(l, v)
+}
+func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation1(in *jlexer.Lexer, out *Message) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "id":
+			out.ID = string(in.String())
+		case "subType":
+			out.SubType = MessageSubType(in.String())
+		case "createDate":
+			if in.IsNull() {
+				in.Skip()
+				out.CreateDate = nil
+			} else {
+				if out.CreateDate == nil {
+					out.CreateDate = new(time.Time)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.CreateDate).UnmarshalJSON(data))
+				}
+			}
+		case "text":
+			out.Text = string(in.String())
+		case "author":
+			if in.IsNull() {
+				in.Skip()
+				out.Author = nil
+			} else {
+				if out.Author == nil {
+					out.Author = new(user.User)
+				}
+				easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelUser(in, out.Author)
+			}
+		case "reply":
+			if in.IsNull() {
+				in.Skip()
+				out.Reply = nil
+			} else {
+				if out.Reply == nil {
+					out.Reply = new(Message)
+				}
+				easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation1(in, out.Reply)
+			}
+		case "forward":
+			if in.IsNull() {
+				in.Skip()
+				out.Forward = nil
+			} else {
+				if out.Forward == nil {
+					out.Forward = new(Message)
+				}
+				easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation1(in, out.Forward)
+			}
+		case "thread":
+			if in.IsNull() {
+				in.Skip()
+				out.Thread = nil
+			} else {
+				in.Delim('[')
+				if out.Thread == nil {
+					if !in.IsDelim(']') {
+						out.Thread = make([]*Message, 0, 8)
+					} else {
+						out.Thread = []*Message{}
+					}
+				} else {
+					out.Thread = (out.Thread)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v22 *Message
+					if in.IsNull() {
+						in.Skip()
+						v22 = nil
+					} else {
+						if v22 == nil {
+							v22 = new(Message)
+						}
+						easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation1(in, v22)
+					}
+					out.Thread = append(out.Thread, v22)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "threadCount":
+			out.ThreadCount = int(in.Int())
+		case "threadUnreadCount":
+			out.ThreadUnreadCount = int(in.Int())
+		case "meta":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				in.Delim('{')
+				if !in.IsDelim('}') {
+					out.Meta = make(model.Meta)
+				} else {
+					out.Meta = nil
+				}
+				for !in.IsDelim('}') {
+					key := string(in.String())
+					in.WantColon()
+					var v23 interface{}
+					if m, ok := v23.(easyjson.Unmarshaler); ok {
+						m.UnmarshalEasyJSON(in)
+					} else if m, ok := v23.(json.Unmarshaler); ok {
+						_ = m.UnmarshalJSON(in.Raw())
+					} else {
+						v23 = in.Interface()
+					}
+					(out.Meta)[key] = v23
+					in.WantComma()
+				}
+				in.Delim('}')
+			}
+		case "edited":
+			out.Edited = bool(in.Bool())
+		case "editDate":
+			if in.IsNull() {
+				in.Skip()
+				out.EditDate = nil
+			} else {
+				if out.EditDate == nil {
+					out.EditDate = new(time.Time)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.EditDate).UnmarshalJSON(data))
+				}
+			}
+		case "unread":
+			if in.IsNull() {
+				in.Skip()
+				out.UnreadUsers = nil
+			} else {
+				in.Delim('[')
+				if out.UnreadUsers == nil {
+					if !in.IsDelim(']') {
+						out.UnreadUsers = make([]*user.User, 0, 8)
+					} else {
+						out.UnreadUsers = []*user.User{}
+					}
+				} else {
+					out.UnreadUsers = (out.UnreadUsers)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v24 *user.User
+					if in.IsNull() {
+						in.Skip()
+						v24 = nil
+					} else {
+						if v24 == nil {
+							v24 = new(user.User)
+						}
+						easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelUser(in, v24)
+					}
+					out.UnreadUsers = append(out.UnreadUsers, v24)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "labels":
+			if in.IsNull() {
+				in.Skip()
+				out.Labels = nil
+			} else {
+				in.Delim('[')
+				if out.Labels == nil {
+					if !in.IsDelim(']') {
+						out.Labels = make([]*Label, 0, 8)
+					} else {
+						out.Labels = []*Label{}
+					}
+				} else {
+					out.Labels = (out.Labels)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v25 *Label
+					if in.IsNull() {
+						in.Skip()
+						v25 = nil
+					} else {
+						if v25 == nil {
+							v25 = new(Label)
+						}
+						easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation2(in, v25)
+					}
+					out.Labels = append(out.Labels, v25)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "messageReactions":
+			if in.IsNull() {
+				in.Skip()
+				out.MessageReactions = nil
+			} else {
+				in.Delim('[')
+				if out.MessageReactions == nil {
+					if !in.IsDelim(']') {
+						out.MessageReactions = make([]*MessageReaction, 0, 8)
+					} else {
+						out.MessageReactions = []*MessageReaction{}
+					}
+				} else {
+					out.MessageReactions = (out.MessageReactions)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v26 *MessageReaction
+					if in.IsNull() {
+						in.Skip()
+						v26 = nil
+					} else {
+						if v26 == nil {
+							v26 = new(MessageReaction)
+						}
+						easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation3(in, v26)
+					}
+					out.MessageReactions = append(out.MessageReactions, v26)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "attachments":
+			if in.IsNull() {
+				in.Skip()
+				out.Attachments = nil
+			} else {
+				in.Delim('[')
+				if out.Attachments == nil {
+					if !in.IsDelim(']') {
+						out.Attachments = make([]*attachment.Attachment, 0, 8)
+					} else {
+						out.Attachments = []*attachment.Attachment{}
+					}
+				} else {
+					out.Attachments = (out.Attachments)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v27 *attachment.Attachment
+					if in.IsNull() {
+						in.Skip()
+						v27 = nil
+					} else {
+						if v27 == nil {
+							v27 = new(attachment.Attachment)
+						}
+						(*v27).UnmarshalEasyJSON(in)
+					}
+					out.Attachments = append(out.Attachments, v27)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "read":
+			out.Read = bool(in.Bool())
+		case "readDate":
+			if in.IsNull() {
+				in.Skip()
+				out.ReadDate = nil
+			} else {
+				if out.ReadDate == nil {
+					out.ReadDate = new(time.Time)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.ReadDate).UnmarshalJSON(data))
+				}
+			}
+		case "callConferenceId":
+			out.CallConferenceId = string(in.String())
+		case "history":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				in.Delim('{')
+				if !in.IsDelim('}') {
+					out.History = make(model.Meta)
+				} else {
+					out.History = nil
+				}
+				for !in.IsDelim('}') {
+					key := string(in.String())
+					in.WantColon()
+					var v28 interface{}
+					if m, ok := v28.(easyjson.Unmarshaler); ok {
+						m.UnmarshalEasyJSON(in)
+					} else if m, ok := v28.(json.Unmarshaler); ok {
+						_ = m.UnmarshalJSON(in.Raw())
+					} else {
+						v28 = in.Interface()
+					}
+					(out.History)[key] = v28
+					in.WantComma()
+				}
+				in.Delim('}')
+			}
+		case "buttons":
+			if in.IsNull() {
+				in.Skip()
+				out.Buttons = nil
+			} else {
+				in.Delim('[')
+				if out.Buttons == nil {
+					if !in.IsDelim(']') {
+						out.Buttons = make(MessageButtons, 0, 1)
+					} else {
+						out.Buttons = MessageButtons{}
+					}
+				} else {
+					out.Buttons = (out.Buttons)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v29 MessageButton
+					easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation4(in, &v29)
+					out.Buttons = append(out.Buttons, v29)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "deleted":
+			out.Deleted = bool(in.Bool())
+		case "deletedDate":
+			if in.IsNull() {
+				in.Skip()
+				out.DeletedDate = nil
+			} else {
+				if out.DeletedDate == nil {
+					out.DeletedDate = new(time.Time)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.DeletedDate).UnmarshalJSON(data))
+				}
+			}
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation1(out *jwriter.Writer, in Message) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	if in.ID != "" {
+		const prefix string = ",\"id\":"
+		first = false
+		out.RawString(prefix[1:])
+		out.String(string(in.ID))
+	}
+	if in.SubType != "" {
+		const prefix string = ",\"subType\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.SubType))
+	}
+	if in.CreateDate != nil {
+		const prefix string = ",\"createDate\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Raw((*in.CreateDate).MarshalJSON())
+	}
+	if in.Text != "" {
+		const prefix string = ",\"text\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Text))
+	}
+	if in.Author != nil {
+		const prefix string = ",\"author\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelUser(out, *in.Author)
+	}
+	if in.Reply != nil {
+		const prefix string = ",\"reply\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation1(out, *in.Reply)
+	}
+	if in.Forward != nil {
+		const prefix string = ",\"forward\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation1(out, *in.Forward)
+	}
+	if len(in.Thread) != 0 {
+		const prefix string = ",\"thread\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		{
+			out.RawByte('[')
+			for v30, v31 := range in.Thread {
+				if v30 > 0 {
+					out.RawByte(',')
+				}
+				if v31 == nil {
+					out.RawString("null")
+				} else {
+					easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation1(out, *v31)
+				}
+			}
+			out.RawByte(']')
+		}
+	}
+	if in.ThreadCount != 0 {
+		const prefix string = ",\"threadCount\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Int(int(in.ThreadCount))
+	}
+	if in.ThreadUnreadCount != 0 {
+		const prefix string = ",\"threadUnreadCount\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Int(int(in.ThreadUnreadCount))
+	}
+	if len(in.Meta) != 0 {
+		const prefix string = ",\"meta\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		{
+			out.RawByte('{')
+			v32First := true
+			for v32Name, v32Value := range in.Meta {
+				if v32First {
+					v32First = false
+				} else {
+					out.RawByte(',')
+				}
+				out.String(string(v32Name))
+				out.RawByte(':')
+				if m, ok := v32Value.(easyjson.Marshaler); ok {
+					m.MarshalEasyJSON(out)
+				} else if m, ok := v32Value.(json.Marshaler); ok {
+					out.Raw(m.MarshalJSON())
+				} else {
+					out.Raw(json.Marshal(v32Value))
+				}
+			}
+			out.RawByte('}')
+		}
+	}
+	if in.Edited {
+		const prefix string = ",\"edited\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(in.Edited))
+	}
+	if in.EditDate != nil {
+		const prefix string = ",\"editDate\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Raw((*in.EditDate).MarshalJSON())
+	}
+	if len(in.UnreadUsers) != 0 {
+		const prefix string = ",\"unread\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		{
+			out.RawByte('[')
+			for v33, v34 := range in.UnreadUsers {
+				if v33 > 0 {
+					out.RawByte(',')
+				}
+				if v34 == nil {
+					out.RawString("null")
+				} else {
+					easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelUser(out, *v34)
+				}
+			}
+			out.RawByte(']')
+		}
+	}
+	if len(in.Labels) != 0 {
+		const prefix string = ",\"labels\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		{
+			out.RawByte('[')
+			for v35, v36 := range in.Labels {
+				if v35 > 0 {
+					out.RawByte(',')
+				}
+				if v36 == nil {
+					out.RawString("null")
+				} else {
+					easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation2(out, *v36)
+				}
+			}
+			out.RawByte(']')
+		}
+	}
+	if len(in.MessageReactions) != 0 {
+		const prefix string = ",\"messageReactions\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		{
+			out.RawByte('[')
+			for v37, v38 := range in.MessageReactions {
+				if v37 > 0 {
+					out.RawByte(',')
+				}
+				if v38 == nil {
+					out.RawString("null")
+				} else {
+					easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation3(out, *v38)
+				}
+			}
+			out.RawByte(']')
+		}
+	}
+	if len(in.Attachments) != 0 {
+		const prefix string = ",\"attachments\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		{
+			out.RawByte('[')
+			for v39, v40 := range in.Attachments {
+				if v39 > 0 {
+					out.RawByte(',')
+				}
+				if v40 == nil {
+					out.RawString("null")
+				} else {
+					(*v40).MarshalEasyJSON(out)
+				}
+			}
+			out.RawByte(']')
+		}
+	}
+	if in.Read {
+		const prefix string = ",\"read\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(in.Read))
+	}
+	if in.ReadDate != nil {
+		const prefix string = ",\"readDate\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Raw((*in.ReadDate).MarshalJSON())
+	}
+	if in.CallConferenceId != "" {
+		const prefix string = ",\"callConferenceId\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.CallConferenceId))
+	}
+	if len(in.History) != 0 {
+		const prefix string = ",\"history\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		{
+			out.RawByte('{')
+			v41First := true
+			for v41Name, v41Value := range in.History {
+				if v41First {
+					v41First = false
+				} else {
+					out.RawByte(',')
+				}
+				out.String(string(v41Name))
+				out.RawByte(':')
+				if m, ok := v41Value.(easyjson.Marshaler); ok {
+					m.MarshalEasyJSON(out)
+				} else if m, ok := v41Value.(json.Marshaler); ok {
+					out.Raw(m.MarshalJSON())
+				} else {
+					out.Raw(json.Marshal(v41Value))
+				}
+			}
+			out.RawByte('}')
+		}
+	}
+	if len(in.Buttons) != 0 {
+		const prefix string = ",\"buttons\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		{
+			out.RawByte('[')
+			for v42, v43 := range in.Buttons {
+				if v42 > 0 {
+					out.RawByte(',')
+				}
+				easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation4(out, v43)
+			}
+			out.RawByte(']')
+		}
+	}
+	if in.Deleted {
+		const prefix string = ",\"deleted\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(in.Deleted))
+	}
+	if in.DeletedDate != nil {
+		const prefix string = ",\"deletedDate\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Raw((*in.DeletedDate).MarshalJSON())
+	}
+	out.RawByte('}')
+}
+func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation4(in *jlexer.Lexer, out *MessageButton) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "label":
+			out.Label = string(in.String())
+		case "data":
+			out.Data = string(in.String())
+		case "url":
+			out.Url = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation4(out *jwriter.Writer, in MessageButton) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	if in.Label != "" {
+		const prefix string = ",\"label\":"
+		first = false
+		out.RawString(prefix[1:])
+		out.String(string(in.Label))
+	}
+	if in.Data != "" {
+		const prefix string = ",\"data\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Data))
+	}
+	if in.Url != "" {
+		const prefix string = ",\"url\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Url))
+	}
+	out.RawByte('}')
+}
+func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation3(in *jlexer.Lexer, out *MessageReaction) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "id":
+			out.ID = string(in.String())
+		case "reaction":
+			if in.IsNull() {
+				in.Skip()
+				out.Reaction = nil
+			} else {
+				if out.Reaction == nil {
+					out.Reaction = new(Reaction)
+				}
+				easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation5(in, out.Reaction)
+			}
+		case "count":
+			out.Count = int(in.Int())
+		case "users":
+			if in.IsNull() {
+				in.Skip()
+				out.Users = nil
+			} else {
+				in.Delim('[')
+				if out.Users == nil {
+					if !in.IsDelim(']') {
+						out.Users = make([]*user.User, 0, 8)
+					} else {
+						out.Users = []*user.User{}
+					}
+				} else {
+					out.Users = (out.Users)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v44 *user.User
+					if in.IsNull() {
+						in.Skip()
+						v44 = nil
+					} else {
+						if v44 == nil {
+							v44 = new(user.User)
+						}
+						easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelUser(in, v44)
+					}
+					out.Users = append(out.Users, v44)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "reactedByMe":
+			out.ReactedByMe = bool(in.Bool())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation3(out *jwriter.Writer, in MessageReaction) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	if in.ID != "" {
+		const prefix string = ",\"id\":"
+		first = false
+		out.RawString(prefix[1:])
+		out.String(string(in.ID))
+	}
+	if in.Reaction != nil {
+		const prefix string = ",\"reaction\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation5(out, *in.Reaction)
+	}
+	if in.Count != 0 {
+		const prefix string = ",\"count\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Int(int(in.Count))
+	}
+	if len(in.Users) != 0 {
+		const prefix string = ",\"users\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		{
+			out.RawByte('[')
+			for v45, v46 := range in.Users {
+				if v45 > 0 {
+					out.RawByte(',')
+				}
+				if v46 == nil {
+					out.RawString("null")
+				} else {
+					easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelUser(out, *v46)
+				}
+			}
+			out.RawByte(']')
+		}
+	}
+	if in.ReactedByMe {
+		const prefix string = ",\"reactedByMe\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(in.ReactedByMe))
+	}
+	out.RawByte('}')
+}
+func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation5(in *jlexer.Lexer, out *Reaction) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "id":
+			out.ID = string(in.String())
+		case "value":
+			out.Value = string(in.String())
+		case "invisible":
+			out.Invisible = bool(in.Bool())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation5(out *jwriter.Writer, in Reaction) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	if in.ID != "" {
+		const prefix string = ",\"id\":"
+		first = false
+		out.RawString(prefix[1:])
+		out.String(string(in.ID))
+	}
+	if in.Value != "" {
+		const prefix string = ",\"value\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Value))
+	}
+	if in.Invisible {
+		const prefix string = ",\"invisible\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(in.Invisible))
+	}
+	out.RawByte('}')
+}
+func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation2(in *jlexer.Lexer, out *Label) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "id":
+			out.ID = string(in.String())
+		case "name":
+			out.Name = string(in.String())
+		case "color":
+			out.Color = int(in.Int())
+		case "invisible":
+			out.Invisible = bool(in.Bool())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation2(out *jwriter.Writer, in Label) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	if in.ID != "" {
+		const prefix string = ",\"id\":"
+		first = false
+		out.RawString(prefix[1:])
+		out.String(string(in.ID))
+	}
+	if in.Name != "" {
+		const prefix string = ",\"name\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Name))
+	}
+	if in.Color != 0 {
+		const prefix string = ",\"color\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Int(int(in.Color))
+	}
+	if in.Invisible {
+		const prefix string = ",\"invisible\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(in.Invisible))
+	}
+	out.RawByte('}')
+}
+func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelUser(in *jlexer.Lexer, out *user.User) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "id":
+			out.ID = string(in.String())
+		case "source":
+			out.Source = string(in.String())
+		case "username":
+			out.Username = string(in.String())
+		case "firstName":
+			out.FirstName = string(in.String())
+		case "lastName":
+			out.LastName = string(in.String())
+		case "email":
+			out.Email = string(in.String())
+		case "position":
+			out.Position = string(in.String())
+		case "avatar":
+			if in.IsNull() {
+				in.Skip()
+				out.Avatar = nil
+			} else {
+				if out.Avatar == nil {
+					out.Avatar = new(model.Avatar)
+				}
+				(*out.Avatar).UnmarshalEasyJSON(in)
+			}
+		case "birthday":
+			if in.IsNull() {
+				in.Skip()
+				out.Birthday = nil
+			} else {
+				if out.Birthday == nil {
+					out.Birthday = new(time.Time)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.Birthday).UnmarshalJSON(data))
+				}
+			}
+		case "phoneNumber":
+			out.PhoneNumber = int64(in.Int64())
+		case "city":
+			out.City = string(in.String())
+		case "company":
+			out.Company = string(in.String())
+		case "department":
+			out.Department = string(in.String())
+		case "chief":
+			if in.IsNull() {
+				in.Skip()
+				out.Chief = nil
+			} else {
+				if out.Chief == nil {
+					out.Chief = new(user.User)
+				}
+				easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelUser(in, out.Chief)
+			}
+		case "lastActivity":
+			if in.IsNull() {
+				in.Skip()
+				out.LastActivity = nil
+			} else {
+				if out.LastActivity == nil {
+					out.LastActivity = new(time.Time)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.LastActivity).UnmarshalJSON(data))
+				}
+			}
+		case "blocked":
+			out.Blocked = bool(in.Bool())
+		case "timeZone":
+			out.TimeZone = int64(in.Int64())
+		case "canChangePassword":
+			out.CanChangePassword = bool(in.Bool())
+		case "canChangeAvatar":
+			out.CanChangeAvatar = bool(in.Bool())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelUser(out *jwriter.Writer, in user.User) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	if in.ID != "" {
+		const prefix string = ",\"id\":"
+		first = false
+		out.RawString(prefix[1:])
+		out.String(string(in.ID))
+	}
+	if in.Source != "" {
+		const prefix string = ",\"source\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Source))
+	}
+	if in.Username != "" {
+		const prefix string = ",\"username\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Username))
+	}
+	if in.FirstName != "" {
+		const prefix string = ",\"firstName\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.FirstName))
+	}
+	if in.LastName != "" {
+		const prefix string = ",\"lastName\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.LastName))
+	}
+	if in.Email != "" {
+		const prefix string = ",\"email\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Email))
+	}
+	if in.Position != "" {
+		const prefix string = ",\"position\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Position))
+	}
+	if in.Avatar != nil {
+		const prefix string = ",\"avatar\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		(*in.Avatar).MarshalEasyJSON(out)
+	}
+	if in.Birthday != nil {
+		const prefix string = ",\"birthday\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Raw((*in.Birthday).MarshalJSON())
+	}
+	if in.PhoneNumber != 0 {
+		const prefix string = ",\"phoneNumber\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Int64(int64(in.PhoneNumber))
+	}
+	if in.City != "" {
+		const prefix string = ",\"city\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.City))
+	}
+	if in.Company != "" {
+		const prefix string = ",\"company\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Company))
+	}
+	if in.Department != "" {
+		const prefix string = ",\"department\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Department))
+	}
+	if in.Chief != nil {
+		const prefix string = ",\"chief\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelUser(out, *in.Chief)
+	}
+	if in.LastActivity != nil {
+		const prefix string = ",\"lastActivity\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Raw((*in.LastActivity).MarshalJSON())
+	}
+	if in.Blocked {
+		const prefix string = ",\"blocked\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(in.Blocked))
+	}
+	if in.TimeZone != 0 {
+		const prefix string = ",\"timeZone\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Int64(int64(in.TimeZone))
+	}
+	if in.CanChangePassword {
+		const prefix string = ",\"canChangePassword\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(in.CanChangePassword))
+	}
+	if in.CanChangeAvatar {
+		const prefix string = ",\"canChangeAvatar\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(in.CanChangeAvatar))
+	}
+	out.RawByte('}')
 }

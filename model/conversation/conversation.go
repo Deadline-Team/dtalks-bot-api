@@ -25,7 +25,8 @@ package conversation
  */
 
 import (
-	authorizationModel "github.com/deadline-team/dtalks-bot-api/model/authorization"
+	"github.com/deadline-team/dtalks-bot-api/model"
+	userModel "github.com/deadline-team/dtalks-bot-api/model/user"
 	"time"
 )
 
@@ -46,19 +47,19 @@ const (
 )
 
 type Conversation struct {
-	ID           string                     `json:"id,omitempty"`
-	Type         []ConversationDType        `json:"type,omitempty"`
-	Name         string                     `json:"name,omitempty"`
-	Avatar       *authorizationModel.Avatar `json:"avatar,omitempty"`
-	Visibility   Visibility                 `json:"visibility,omitempty"`
-	CreateDate   *time.Time                 `json:"createDate,omitempty"`
-	Owner        *authorizationModel.User   `json:"owner,omitempty"`
-	Admins       []*authorizationModel.User `json:"admins,omitempty"`
-	Members      []*authorizationModel.User `json:"members,omitempty"`
-	MutedMembers []*authorizationModel.User `json:"mutedMembers,omitempty"`
-	Messages     []*Message                 `json:"messages,omitempty"`
-	Pinned       []*Message                 `json:"pinned,omitempty"`
-	UnreadCount  int                        `json:"unreadCount,omitempty"`
-	MessageCount int                        `json:"messageCount,omitempty"`
-	UnreadThread []*Message                 `json:"unreadThread,omitempty"`
+	ID           string              `json:"id,omitempty"`
+	Type         []ConversationDType `json:"type,omitempty"`
+	Name         string              `json:"name,omitempty"`
+	Avatar       *model.Avatar       `json:"avatar,omitempty"`
+	Visibility   Visibility          `json:"visibility,omitempty"`
+	CreateDate   *time.Time          `json:"createDate,omitempty"`
+	Owner        *userModel.User     `json:"owner,omitempty"`
+	Admins       []*userModel.User   `json:"admins,omitempty"`
+	Members      []*userModel.User   `json:"members,omitempty"`
+	MutedMembers []*userModel.User   `json:"mutedMembers,omitempty"`
+	Messages     []*Message          `json:"messages,omitempty"`
+	Pinned       []*Message          `json:"pinned,omitempty"`
+	UnreadCount  int                 `json:"unreadCount,omitempty"`
+	MessageCount int                 `json:"messageCount,omitempty"`
+	UnreadThread []*Message          `json:"unreadThread,omitempty"`
 }

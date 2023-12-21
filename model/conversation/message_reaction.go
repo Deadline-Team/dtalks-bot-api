@@ -24,12 +24,12 @@ package conversation
  * © "DEADLINE TEAM" LLC, All rights reserved.
  */
 
-import authorizationModel "github.com/deadline-team/dtalks-bot-api/model/authorization"
+import userModel "github.com/deadline-team/dtalks-bot-api/model/user"
 
 type MessageReaction struct {
-	ID          string                     `json:"id,omitempty"`
-	Reaction    *Reaction                  `json:"reaction,omitempty"`
-	Count       int                        `json:"count,omitempty"`
-	Users       []*authorizationModel.User `json:"users,omitempty"`
-	ReactedByMe bool                       `json:"reactedByMe,omitempty"`
+	ID          string            `json:"id,omitempty"`
+	Reaction    *Reaction         `json:"reaction,omitempty"`
+	Count       int               `json:"count,omitempty"`
+	Users       []*userModel.User `json:"users,omitempty"`
+	ReactedByMe bool              `json:"reactedByMe,omitempty"`
 }

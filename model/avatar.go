@@ -1,4 +1,4 @@
-package authorization
+package model
 
 /*
  * Copyright © 2023, "DEADLINE TEAM" LLC
@@ -24,19 +24,11 @@ package authorization
  * © "DEADLINE TEAM" LLC, All rights reserved.
  */
 
-import (
-	"github.com/deadline-team/dtalks-bot-api/model"
-	"time"
-)
-
-type UserSettings struct {
-	ID                  string          `json:"id,omitempty"`
-	Status              string          `json:"status,omitempty"`
-	BaseStatus          *BaseUserStatus `json:"baseStatus,omitempty"`
-	BaseStatusMeta      model.Meta      `json:"baseStatusMeta,omitempty"`
-	BaseStatusEndDate   *time.Time      `json:"baseStatusEndDate,omitempty"`
-	IamLeftHanded       bool            `json:"iamLeftHanded,omitempty"`
-	HideMyPhoneNumber   bool            `json:"hideMyPhoneNumber,omitempty"`
-	HideBackgroundImage bool            `json:"hideBackgroundImage,omitempty"`
-	DisableAnimation    bool            `json:"disableAnimation,omitempty"`
+type Avatar struct {
+	ID     string `json:"id,omitempty"`
+	Origin []byte `json:"origin,omitempty"`
+	S512   []byte `json:"s512,omitempty"`
+	S256   []byte `json:"s256,omitempty"`
+	S128   []byte `json:"s128,omitempty"`
+	Hash   string `json:"hash,omitempty"`
 }

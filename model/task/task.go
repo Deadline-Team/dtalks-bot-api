@@ -25,8 +25,8 @@ package task
  */
 
 import (
-	authorizationModel "github.com/deadline-team/dtalks-bot-api/model/authorization"
 	conversationModel "github.com/deadline-team/dtalks-bot-api/model/conversation"
+	userModel "github.com/deadline-team/dtalks-bot-api/model/user"
 	"time"
 )
 
@@ -35,8 +35,8 @@ type Task struct {
 	Number       string                          `json:"number,omitempty"`
 	Description  string                          `json:"description,omitempty"`
 	CreateDate   *time.Time                      `json:"createDate,omitempty"`
-	Creator      *authorizationModel.User        `json:"creator,omitempty"`
-	Responsible  *authorizationModel.User        `json:"responsible,omitempty"`
+	Creator      *userModel.User                 `json:"creator,omitempty"`
+	Responsible  *userModel.User                 `json:"responsible,omitempty"`
 	Deadline     *time.Time                      `json:"deadline,omitempty"`
 	Conversation *conversationModel.Conversation `json:"conversation,omitempty"`
 	Message      *conversationModel.Message      `json:"message,omitempty"`

@@ -26,18 +26,18 @@ package attachment
 
 import (
 	"github.com/deadline-team/dtalks-bot-api/model"
-	authorizationModel "github.com/deadline-team/dtalks-bot-api/model/authorization"
+	userModel "github.com/deadline-team/dtalks-bot-api/model/user"
 	"time"
 )
 
 type Attachment struct {
-	ID         string                   `json:"id,omitempty"`
-	CreateDate *time.Time               `json:"createDate,omitempty"`
-	Author     *authorizationModel.User `json:"author,omitempty"`
-	FileName   string                   `json:"fileName,omitempty"`
-	MimeType   string                   `json:"mimeType,omitempty"`
-	Size       int64                    `json:"size,omitempty"`
-	Path       string                   `json:"path,omitempty"`
-	Hash       string                   `json:"hash,omitempty"`
-	Meta       model.Meta               `json:"meta,omitempty"`
+	ID         string          `json:"id,omitempty"`
+	CreateDate *time.Time      `json:"createDate,omitempty"`
+	Author     *userModel.User `json:"author,omitempty"`
+	FileName   string          `json:"fileName,omitempty"`
+	MimeType   string          `json:"mimeType,omitempty"`
+	Size       int64           `json:"size,omitempty"`
+	Path       string          `json:"path,omitempty"`
+	Hash       string          `json:"hash,omitempty"`
+	Meta       model.Meta      `json:"meta,omitempty"`
 }

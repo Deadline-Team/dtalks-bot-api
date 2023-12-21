@@ -4,8 +4,8 @@ package task
 
 import (
 	json "encoding/json"
-	authorization "github.com/deadline-team/dtalks-bot-api/model/authorization"
 	conversation "github.com/deadline-team/dtalks-bot-api/model/conversation"
+	user "github.com/deadline-team/dtalks-bot-api/model/user"
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"
 	jwriter "github.com/mailru/easyjson/jwriter"
@@ -63,7 +63,7 @@ func easyjson79a0a577DecodeGithubComDeadlineTeamDtalksBotApiModelTask(in *jlexer
 				out.Creator = nil
 			} else {
 				if out.Creator == nil {
-					out.Creator = new(authorization.User)
+					out.Creator = new(user.User)
 				}
 				(*out.Creator).UnmarshalEasyJSON(in)
 			}
@@ -73,7 +73,7 @@ func easyjson79a0a577DecodeGithubComDeadlineTeamDtalksBotApiModelTask(in *jlexer
 				out.Responsible = nil
 			} else {
 				if out.Responsible == nil {
-					out.Responsible = new(authorization.User)
+					out.Responsible = new(user.User)
 				}
 				(*out.Responsible).UnmarshalEasyJSON(in)
 			}

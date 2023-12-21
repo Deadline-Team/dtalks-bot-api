@@ -26,7 +26,7 @@ package calendar_event
 
 import (
 	attachmentModel "github.com/deadline-team/dtalks-bot-api/model/attachment"
-	authorizationModel "github.com/deadline-team/dtalks-bot-api/model/authorization"
+	userModel "github.com/deadline-team/dtalks-bot-api/model/user"
 	"time"
 )
 
@@ -60,12 +60,12 @@ type CalendarEvent struct {
 	Name            string                        `json:"name,omitempty"`
 	Description     string                        `json:"description,omitempty"`
 	Location        string                        `json:"location,omitempty"`
-	Organizer       *authorizationModel.User      `json:"organizer,omitempty"`
+	Organizer       *userModel.User               `json:"organizer,omitempty"`
 	StartDate       *time.Time                    `json:"startDate,omitempty"`
 	EndDate         *time.Time                    `json:"endDate,omitempty"`
 	Transparency    TransparencyType              `json:"transparency,omitempty"`
 	Visibility      VisibilityType                `json:"visibility,omitempty"`
-	Members         []*authorizationModel.User    `json:"members,omitempty"`
+	Members         []*userModel.User             `json:"members,omitempty"`
 	ExternalMembers []string                      `json:"externalMembers,omitempty"`
 	MembersStatuses MembersStatusesMap            `json:"membersStatuses,omitempty"`
 	Attachments     []*attachmentModel.Attachment `json:"attachments,omitempty"`

@@ -4,8 +4,9 @@ package calendar_event
 
 import (
 	json "encoding/json"
+	model "github.com/deadline-team/dtalks-bot-api/model"
 	attachment "github.com/deadline-team/dtalks-bot-api/model/attachment"
-	authorization "github.com/deadline-team/dtalks-bot-api/model/authorization"
+	user "github.com/deadline-team/dtalks-bot-api/model/user"
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"
 	jwriter "github.com/mailru/easyjson/jwriter"
@@ -77,9 +78,9 @@ func easyjsonFfeb30e3DecodeGithubComDeadlineTeamDtalksBotApiModelCalendarEvent(i
 				out.Organizer = nil
 			} else {
 				if out.Organizer == nil {
-					out.Organizer = new(authorization.User)
+					out.Organizer = new(user.User)
 				}
-				(*out.Organizer).UnmarshalEasyJSON(in)
+				easyjsonFfeb30e3DecodeGithubComDeadlineTeamDtalksBotApiModelUser(in, out.Organizer)
 			}
 		case "startDate":
 			if in.IsNull() {
@@ -117,23 +118,23 @@ func easyjsonFfeb30e3DecodeGithubComDeadlineTeamDtalksBotApiModelCalendarEvent(i
 				in.Delim('[')
 				if out.Members == nil {
 					if !in.IsDelim(']') {
-						out.Members = make([]*authorization.User, 0, 8)
+						out.Members = make([]*user.User, 0, 8)
 					} else {
-						out.Members = []*authorization.User{}
+						out.Members = []*user.User{}
 					}
 				} else {
 					out.Members = (out.Members)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v1 *authorization.User
+					var v1 *user.User
 					if in.IsNull() {
 						in.Skip()
 						v1 = nil
 					} else {
 						if v1 == nil {
-							v1 = new(authorization.User)
+							v1 = new(user.User)
 						}
-						(*v1).UnmarshalEasyJSON(in)
+						easyjsonFfeb30e3DecodeGithubComDeadlineTeamDtalksBotApiModelUser(in, v1)
 					}
 					out.Members = append(out.Members, v1)
 					in.WantComma()
@@ -292,7 +293,7 @@ func easyjsonFfeb30e3EncodeGithubComDeadlineTeamDtalksBotApiModelCalendarEvent(o
 		} else {
 			out.RawString(prefix)
 		}
-		(*in.Organizer).MarshalEasyJSON(out)
+		easyjsonFfeb30e3EncodeGithubComDeadlineTeamDtalksBotApiModelUser(out, *in.Organizer)
 	}
 	if in.StartDate != nil {
 		const prefix string = ",\"startDate\":"
@@ -351,7 +352,7 @@ func easyjsonFfeb30e3EncodeGithubComDeadlineTeamDtalksBotApiModelCalendarEvent(o
 				if v6 == nil {
 					out.RawString("null")
 				} else {
-					(*v6).MarshalEasyJSON(out)
+					easyjsonFfeb30e3EncodeGithubComDeadlineTeamDtalksBotApiModelUser(out, *v6)
 				}
 			}
 			out.RawByte(']')
@@ -448,4 +449,299 @@ func (v *CalendarEvent) UnmarshalJSON(data []byte) error {
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *CalendarEvent) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjsonFfeb30e3DecodeGithubComDeadlineTeamDtalksBotApiModelCalendarEvent(l, v)
+}
+func easyjsonFfeb30e3DecodeGithubComDeadlineTeamDtalksBotApiModelUser(in *jlexer.Lexer, out *user.User) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "id":
+			out.ID = string(in.String())
+		case "source":
+			out.Source = string(in.String())
+		case "username":
+			out.Username = string(in.String())
+		case "firstName":
+			out.FirstName = string(in.String())
+		case "lastName":
+			out.LastName = string(in.String())
+		case "email":
+			out.Email = string(in.String())
+		case "position":
+			out.Position = string(in.String())
+		case "avatar":
+			if in.IsNull() {
+				in.Skip()
+				out.Avatar = nil
+			} else {
+				if out.Avatar == nil {
+					out.Avatar = new(model.Avatar)
+				}
+				(*out.Avatar).UnmarshalEasyJSON(in)
+			}
+		case "birthday":
+			if in.IsNull() {
+				in.Skip()
+				out.Birthday = nil
+			} else {
+				if out.Birthday == nil {
+					out.Birthday = new(time.Time)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.Birthday).UnmarshalJSON(data))
+				}
+			}
+		case "phoneNumber":
+			out.PhoneNumber = int64(in.Int64())
+		case "city":
+			out.City = string(in.String())
+		case "company":
+			out.Company = string(in.String())
+		case "department":
+			out.Department = string(in.String())
+		case "chief":
+			if in.IsNull() {
+				in.Skip()
+				out.Chief = nil
+			} else {
+				if out.Chief == nil {
+					out.Chief = new(user.User)
+				}
+				easyjsonFfeb30e3DecodeGithubComDeadlineTeamDtalksBotApiModelUser(in, out.Chief)
+			}
+		case "lastActivity":
+			if in.IsNull() {
+				in.Skip()
+				out.LastActivity = nil
+			} else {
+				if out.LastActivity == nil {
+					out.LastActivity = new(time.Time)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.LastActivity).UnmarshalJSON(data))
+				}
+			}
+		case "blocked":
+			out.Blocked = bool(in.Bool())
+		case "timeZone":
+			out.TimeZone = int64(in.Int64())
+		case "canChangePassword":
+			out.CanChangePassword = bool(in.Bool())
+		case "canChangeAvatar":
+			out.CanChangeAvatar = bool(in.Bool())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonFfeb30e3EncodeGithubComDeadlineTeamDtalksBotApiModelUser(out *jwriter.Writer, in user.User) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	if in.ID != "" {
+		const prefix string = ",\"id\":"
+		first = false
+		out.RawString(prefix[1:])
+		out.String(string(in.ID))
+	}
+	if in.Source != "" {
+		const prefix string = ",\"source\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Source))
+	}
+	if in.Username != "" {
+		const prefix string = ",\"username\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Username))
+	}
+	if in.FirstName != "" {
+		const prefix string = ",\"firstName\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.FirstName))
+	}
+	if in.LastName != "" {
+		const prefix string = ",\"lastName\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.LastName))
+	}
+	if in.Email != "" {
+		const prefix string = ",\"email\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Email))
+	}
+	if in.Position != "" {
+		const prefix string = ",\"position\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Position))
+	}
+	if in.Avatar != nil {
+		const prefix string = ",\"avatar\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		(*in.Avatar).MarshalEasyJSON(out)
+	}
+	if in.Birthday != nil {
+		const prefix string = ",\"birthday\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Raw((*in.Birthday).MarshalJSON())
+	}
+	if in.PhoneNumber != 0 {
+		const prefix string = ",\"phoneNumber\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Int64(int64(in.PhoneNumber))
+	}
+	if in.City != "" {
+		const prefix string = ",\"city\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.City))
+	}
+	if in.Company != "" {
+		const prefix string = ",\"company\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Company))
+	}
+	if in.Department != "" {
+		const prefix string = ",\"department\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Department))
+	}
+	if in.Chief != nil {
+		const prefix string = ",\"chief\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		easyjsonFfeb30e3EncodeGithubComDeadlineTeamDtalksBotApiModelUser(out, *in.Chief)
+	}
+	if in.LastActivity != nil {
+		const prefix string = ",\"lastActivity\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Raw((*in.LastActivity).MarshalJSON())
+	}
+	if in.Blocked {
+		const prefix string = ",\"blocked\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(in.Blocked))
+	}
+	if in.TimeZone != 0 {
+		const prefix string = ",\"timeZone\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Int64(int64(in.TimeZone))
+	}
+	if in.CanChangePassword {
+		const prefix string = ",\"canChangePassword\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(in.CanChangePassword))
+	}
+	if in.CanChangeAvatar {
+		const prefix string = ",\"canChangeAvatar\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(in.CanChangeAvatar))
+	}
+	out.RawByte('}')
 }

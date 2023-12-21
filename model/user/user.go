@@ -1,4 +1,4 @@
-package authorization
+package user
 
 /*
  * Copyright © 2023, "DEADLINE TEAM" LLC
@@ -25,6 +25,7 @@ package authorization
  */
 
 import (
+	"github.com/deadline-team/dtalks-bot-api/model"
 	"time"
 )
 
@@ -36,17 +37,13 @@ type User struct {
 	LastName          string        `json:"lastName,omitempty"`
 	Email             string        `json:"email,omitempty"`
 	Position          string        `json:"position,omitempty"`
-	Avatar            *Avatar       `json:"avatar,omitempty"`
+	Avatar            *model.Avatar `json:"avatar,omitempty"`
 	Birthday          *time.Time    `json:"birthday,omitempty"`
 	PhoneNumber       int64         `json:"phoneNumber,omitempty"`
 	City              string        `json:"city,omitempty"`
 	Company           string        `json:"company,omitempty"`
 	Department        string        `json:"department,omitempty"`
 	Chief             *User         `json:"chief,omitempty"`
-	Roles             []*Role       `json:"roles,omitempty"`
-	Authorities       []*Authority  `json:"authorities,omitempty"`
-	Settings          *UserSettings `json:"settings,omitempty"`
-	Devices           []*Device     `json:"devices,omitempty"`
 	LastActivity      *time.Time    `json:"lastActivity,omitempty"`
 	Blocked           bool          `json:"blocked,omitempty"`
 	TimeZone          int64         `json:"timeZone,omitempty"`

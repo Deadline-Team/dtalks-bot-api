@@ -27,7 +27,7 @@ package conversation
 import (
 	"github.com/deadline-team/dtalks-bot-api/model"
 	attachmentModel "github.com/deadline-team/dtalks-bot-api/model/attachment"
-	authorizationModel "github.com/deadline-team/dtalks-bot-api/model/authorization"
+	userModel "github.com/deadline-team/dtalks-bot-api/model/user"
 	"time"
 )
 
@@ -47,7 +47,7 @@ type Message struct {
 	SubType           MessageSubType                `json:"subType,omitempty"`
 	CreateDate        *time.Time                    `json:"createDate,omitempty"`
 	Text              string                        `json:"text,omitempty"`
-	Author            *authorizationModel.User      `json:"author,omitempty"`
+	Author            *userModel.User               `json:"author,omitempty"`
 	Reply             *Message                      `json:"reply,omitempty"`
 	Forward           *Message                      `json:"forward,omitempty"`
 	Thread            []*Message                    `json:"thread,omitempty"`
@@ -56,7 +56,7 @@ type Message struct {
 	Meta              model.Meta                    `json:"meta,omitempty"`
 	Edited            bool                          `json:"edited,omitempty"`
 	EditDate          *time.Time                    `json:"editDate,omitempty"`
-	UnreadUsers       []*authorizationModel.User    `json:"unread,omitempty"`
+	UnreadUsers       []*userModel.User             `json:"unread,omitempty"`
 	Labels            []*Label                      `json:"labels,omitempty"`
 	MessageReactions  []*MessageReaction            `json:"messageReactions,omitempty"`
 	Attachments       []*attachmentModel.Attachment `json:"attachments,omitempty"`
