@@ -25,9 +25,8 @@ package dtalks_bot_api
  */
 
 import (
-	"bytes"
+	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/deadline-team/dtalks-bot-api/model"
 	attachmentModel "github.com/deadline-team/dtalks-bot-api/model/attachment"
@@ -35,17 +34,113 @@ import (
 	"github.com/deadline-team/dtalks-bot-api/util"
 	"io"
 	"log"
-	"mime/multipart"
 	"net/http"
 	"strings"
 	"time"
 )
 
 type BotAPI interface {
+	// GetEventChannel
+	// Метод для получения канала в который складываются все события с сервера
 	GetEventChannel() chan model.Event
-	GetConversations() ([]conversationModel.Conversation, error)
-	SendMessage(conversationId string, text string, attachments []*attachmentModel.Attachment) (*conversationModel.Message, error)
-	CreateAttachment(fileName string, data []byte) (*attachmentModel.Attachment, error)
+
+	/*---------------------- Attachments ----------------------*/
+
+	// CreateAttachment
+	// Метод для создания вложения на сервере
+	CreateAttachment(ctx context.Context, fileName string, data []byte) (*attachmentModel.Attachment, error)
+	//TODO GetAttachmentById(ctx context.Context, attachmentId string) ([]byte, error)
+	//TODO GetAttachmentMetaById(ctx context.Context, attachmentId string) (*attachmentModel.Attachment, error)
+
+	/*---------------------- Users ----------------------*/
+
+	//TODO GetUserById(ctx context.Context, id string, fields string) authorizationModel.User
+	//TODO GetUserAvatarById(ctx context.Context, id string, dimension string) []byte
+	//TODO GetUserAll(ctx context.Context, page model.Pageable, fields string) model.Page[authorizationModel.User]
+	//TODO GetUserAllAdmins(ctx context.Context) []authorizationModel.User
+	//TODO FindUserByUsername(ctx context.Context, username string, fields string) authorizationModel.User
+	//TODO FindUserByEmail(ctx context.Context, email string, fields string) authorizationModel.User
+
+	//TODO BlockUserById(ctx context.Context, id string)
+	//TODO UnblockUserById(ctx context.Context, id string)
+	//TODO RefreshUserTokenById(ctx context.Context, id string)
+	//TODO DropUserCacheById(ctx context.Context, id string)
+	//TODO LogoutUserById(ctx context.Context, id string)
+
+	/*---------------------- Conversations ----------------------*/
+
+	// GetConversationAll
+	// Метод для получения всех открытых диалогов с ботом
+	GetConversationAll(ctx context.Context) ([]conversationModel.Conversation, error)
+
+	//TODO GetConversationById(ctx context.Context, id string, fields string) conversationModel.Conversation
+	//TODO GetConversationAvatarById(ctx context.Context, id string, dimension string) []byte
+	//TODO CreateConversation(ctx context.Context, dType conversationModel.ConversationDType, conversation conversationModel.Conversation) conversationModel.Conversation
+	//TODO UpdateConversation(ctx context.Context, conversation conversationModel.Conversation) conversationModel.Conversation
+	//TODO DeleteConversationById(ctx context.Context, conversationId string)
+	//TODO AddConversationMemberById(ctx context.Context, conversationId string, userId string)
+	//TODO RemoveConversationMemberById(ctx context.Context, conversationId string, userId string)
+
+	/*---------------------- Messages ----------------------*/
+
+	// CreateMessage
+	// Метод для создания и отправки сообщения в диалог
+	CreateMessage(ctx context.Context, conversationId string, message conversationModel.Message) (*conversationModel.Message, error)
+
+	//TODO GetMessageById(ctx context.Context, id string, fields string) conversationModel.Message
+	//TODO GetMessageAll(ctx context.Context, conversationId string) model.Page[conversationModel.Message]
+	//TODO UpdateMessage(ctx context.Context, conversationId string, messageId string, text string) conversationModel.Message
+	//TODO DeleteMessageById(ctx context.Context, conversationId string, messageId string)
+	//TODO PinMessage(ctx context.Context, conversationId string, messageId string)
+	//TODO UnpinMessage(ctx context.Context, conversationId string, messageId string)
+	//TODO ReadMessage(ctx context.Context, conversationId string, messageId string)
+	//TODO AddLabelToMessage(ctx context.Context, conversationId string, messageId string, labelId string)
+	//TODO RemoveLabelToMessage(ctx context.Context, conversationId string, messageId string, labelId string)
+	//TODO ReactMessage(ctx context.Context, conversationId string, messageId string, reactionId string)
+
+	//TODO GetThreadMessageAll(ctx context.Context, conversationId string, parentMessageId string) conversationModel.Message
+	//TODO CreateThreadMessage(ctx context.Context, conversationId string, parentMessageId string, message conversationModel.Message) conversationModel.Message
+	//TODO UpdateThreadMessage(ctx context.Context, conversationId string, parentMessageId string, messageId string, text string) conversationModel.Message
+	//TODO DeleteThreadMessageById(ctx context.Context, conversationId string, parentMessageId string, messageId string)
+	//TODO ReadThreadMessage(ctx context.Context, conversationId string, parentMessageId string, messageId string)
+	//TODO AddLabelToThreadMessage(ctx context.Context, conversationId string, parentMessageId string, messageId string, labelId string)
+	//TODO RemoveLabelToThreadMessage(ctx context.Context, conversationId string, parentMessageId string, messageId string, labelId string)
+	//TODO ReactThreadMessage(ctx context.Context, conversationId string, parentMessageId string, messageId string, reactionId string)
+
+	/*---------------------- Labels ----------------------*/
+
+	//TODO GetLabelById(ctx context.Context, id string, fields string) conversationModel.Label
+	//TODO GetLabelAll(ctx context.Context, page model.Pageable, fields string) model.Page[conversationModel.Label]
+	//TODO CreateLabel(ctx context.Context, label conversationModel.Label) conversationModel.Label
+	//TODO UpdateLabel(ctx context.Context, label conversationModel.Label) conversationModel.Label
+	//TODO DeleteLabelById(ctx context.Context, id string)
+	//TODO FindLabelByName(ctx context.Context, name string) conversationModel.Label
+
+	/*---------------------- Reactions ----------------------*/
+
+	//TODO GetById(ctx context.Context, id string, fields string) conversationModel.Reaction
+	//TODO GetAll(ctx context.Context, page model.Pageable, fields string) model.Page[conversationModel.Reaction]
+	//TODO Create(ctx context.Context, reaction conversationModel.Reaction) conversationModel.Reaction
+	//TODO Update(ctx context.Context, reaction conversationModel.Reaction) conversationModel.Reaction
+	//TODO DeleteById(ctx context.Context, id string)
+	//TODO FindByValue(ctx context.Context, value string) conversationModel.Reaction
+
+	/*---------------------- Meetings ----------------------*/
+
+	//TODO GetMeetingById(ctx context.Context, id string, fields string) calendarEventModel.CalendarEvent
+	//TODO GetMeetingAll(ctx context.Context, fields string) []calendarEventModel.CalendarEvent
+	//TODO CreateMeeting(ctx context.Context, calendarEvent calendarEventModel.CalendarEvent) calendarEventModel.CalendarEvent
+	//TODO UpdateMeeting(ctx context.Context, calendarEvent calendarEventModel.CalendarEvent) calendarEventModel.CalendarEvent
+	//TODO DeleteMeetingById(ctx context.Context, id string)
+
+	/*---------------------- Tasks ----------------------*/
+
+	//TODO GetTaskById(ctx context.Context, id string, fields string) taskModel.Task
+	//TODO GetTaskAll(ctx context.Context, filter taskModel.TaskFilter, fields string) []taskModel.Task
+	//TODO CreateTask(ctx context.Context, task taskModel.Task) taskModel.Task
+	//TODO UpdateTask(ctx context.Context, task taskModel.Task) taskModel.Task
+	//TODO DeleteTaskById(ctx context.Context, id string)
+	//TODO ResolveTaskById(ctx context.Context, id string)
 }
 
 var httpClient = &http.Client{Timeout: time.Second * 30}
@@ -98,99 +193,6 @@ func (client *botAPI) GetEventChannel() chan model.Event {
 	return client.channel
 }
 
-func (client *botAPI) GetConversations() ([]conversationModel.Conversation, error) {
-	request, err := client.createRequest(http.MethodGet, "/api/conversation/conversations", nil)
-	if err != nil {
-		return nil, err
-	}
-
-	response, err := httpClient.Do(request)
-	if err != nil {
-		return nil, err
-	}
-	if response.StatusCode != 200 {
-		return nil, errors.New(response.Status)
-	}
-	var conversationPage model.Page[conversationModel.Conversation]
-	if err := json.NewDecoder(response.Body).Decode(&conversationPage); err != nil {
-		return nil, err
-	}
-	if err = response.Body.Close(); err != nil {
-		return nil, err
-	}
-
-	return conversationPage.Content, nil
-}
-
-func (client *botAPI) SendMessage(conversationId string, text string, attachments []*attachmentModel.Attachment) (*conversationModel.Message, error) {
-	data, err := json.Marshal(conversationModel.Message{Text: text, Attachments: attachments})
-	if err != nil {
-		return nil, err
-	}
-
-	request, err := client.createRequest(http.MethodPost, fmt.Sprintf("/api/conversation/conversations/%s/messages", conversationId), bytes.NewReader(data))
-	if err != nil {
-		return nil, err
-	}
-
-	response, err := httpClient.Do(request)
-	if err != nil {
-		return nil, err
-	}
-	if response.StatusCode != 201 {
-		return nil, errors.New(response.Status)
-	}
-	var message conversationModel.Message
-	if err := json.NewDecoder(response.Body).Decode(&message); err != nil {
-		return nil, err
-	}
-	if err = response.Body.Close(); err != nil {
-		return nil, err
-	}
-
-	return &message, err
-}
-
-func (client *botAPI) CreateAttachment(fileName string, data []byte) (*attachmentModel.Attachment, error) {
-	buf := new(bytes.Buffer)
-	bw := multipart.NewWriter(buf)
-	fw, err := bw.CreateFormFile("file", fileName)
-	if err != nil {
-		return nil, err
-	}
-	_, err = fw.Write(data)
-	if err != nil {
-		return nil, err
-	}
-	if err = bw.Close(); err != nil {
-		return nil, err
-	}
-
-	request, err := client.createRequest(http.MethodPost, "/api/attachment/attachments", buf)
-	if err != nil {
-		return nil, err
-	}
-	request.Header.Set("Content-Type", bw.FormDataContentType())
-
-	response, err := httpClient.Do(request)
-	if err != nil {
-		return nil, err
-	}
-	if response.StatusCode != 201 {
-		return nil, errors.New(response.Status)
-	}
-
-	var attachment attachmentModel.Attachment
-	if err := json.NewDecoder(response.Body).Decode(&attachment); err != nil {
-		return nil, err
-	}
-	if err = response.Body.Close(); err != nil {
-		return nil, err
-	}
-
-	return &attachment, err
-}
-
 func (client *botAPI) onConnect() {
 	log.Printf("Connected like %s (%s)", client.tokenInfo.GetFullName(), client.tokenInfo.Username)
 }
@@ -226,13 +228,13 @@ func (client *botAPI) onMessage(msg []byte) {
 	}
 }
 
-func (client *botAPI) createRequest(method string, path string, body io.Reader) (*http.Request, error) {
+func (client *botAPI) createRequest(ctx context.Context, method string, path string, body io.Reader) (*http.Request, error) {
 	schema := "http"
 	if client.Secure {
 		schema = "https"
 	}
 
-	request, err := http.NewRequest(method, fmt.Sprintf("%s://%s%s", schema, client.Host, path), body)
+	request, err := http.NewRequestWithContext(ctx, method, fmt.Sprintf("%s://%s%s", schema, client.Host, path), body)
 	if err != nil {
 		return nil, err
 	}
