@@ -1,4 +1,4 @@
-package dtalks_bot_api
+package service
 
 /*
  * Copyright © 2023, "DEADLINE TEAM" LLC
@@ -30,21 +30,63 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/deadline-team/dtalks-bot-api/model"
 	calendarEventModel "github.com/deadline-team/dtalks-bot-api/model/calendar_event"
+	"github.com/deadline-team/dtalks-bot-api/util"
 	"net/http"
 	"time"
 )
 
 const calendarEventBasePath = "/api/calendarEvent/calendarEvents"
 
-func (client *botAPI) GetCalendarEventById(ctx context.Context, calendarEventId string, fields string) (*calendarEventModel.CalendarEvent, error) {
-	request, err := client.createRequest(ctx, http.MethodGet, fmt.Sprintf("%s/%s", calendarEventBasePath, calendarEventId), nil)
+var calendarEventSrv CalendarEventService
+
+type CalendarEventService interface {
+	// GetCalendarEventById
+	// Метод для получения событий календаря по ID
+	GetCalendarEventById(ctx context.Context, meetingId string, fields string) (*calendarEventModel.CalendarEvent, error)
+
+	// GetCalendarEventAll
+	// Метод для получения всех событий календаря с фильтрацией
+	GetCalendarEventAll(ctx context.Context, filter calendarEventModel.CalendarEventFilter, fields string) ([]calendarEventModel.CalendarEvent, error)
+
+	// CreateCalendarEvent
+	// Метод для создания событий календаря
+	CreateCalendarEvent(ctx context.Context, calendarEvent calendarEventModel.CalendarEvent) (*calendarEventModel.CalendarEvent, error)
+
+	// UpdateCalendarEvent
+	// Метод для обновления событий календаря
+	UpdateCalendarEvent(ctx context.Context, calendarEvent calendarEventModel.CalendarEvent) (*calendarEventModel.CalendarEvent, error)
+
+	// DeleteCalendarEventById
+	// Метод для удаления событий календаря по ID
+	DeleteCalendarEventById(ctx context.Context, meetingId string) error
+}
+
+type calendarEventService struct {
+	model.BotBaseParam
+	httpClient *http.Client
+}
+
+func NewCalendarEventService(botBaseParam model.BotBaseParam) CalendarEventService {
+	if calendarEventSrv != nil {
+		return calendarEventSrv
+	}
+	calendarEventSrv = &calendarEventService{
+		BotBaseParam: botBaseParam,
+		httpClient:   &http.Client{Timeout: time.Second * 30},
+	}
+	return calendarEventSrv
+}
+
+func (service *calendarEventService) GetCalendarEventById(ctx context.Context, calendarEventId string, fields string) (*calendarEventModel.CalendarEvent, error) {
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodGet, fmt.Sprintf("%s/%s", calendarEventBasePath, calendarEventId), nil)
 	if err != nil {
 		return nil, err
 	}
 	appendCalendarEventQueryParams(request, calendarEventModel.CalendarEventFilter{}, fields)
 
-	response, err := httpClient.Do(request)
+	response, err := service.httpClient.Do(request)
 	if err != nil {
 		return nil, err
 	}
@@ -62,14 +104,14 @@ func (client *botAPI) GetCalendarEventById(ctx context.Context, calendarEventId 
 	return calendarEvent, nil
 }
 
-func (client *botAPI) GetCalendarEventAll(ctx context.Context, filter calendarEventModel.CalendarEventFilter, fields string) ([]calendarEventModel.CalendarEvent, error) {
-	request, err := client.createRequest(ctx, http.MethodGet, calendarEventBasePath, nil)
+func (service *calendarEventService) GetCalendarEventAll(ctx context.Context, filter calendarEventModel.CalendarEventFilter, fields string) ([]calendarEventModel.CalendarEvent, error) {
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodGet, calendarEventBasePath, nil)
 	if err != nil {
 		return nil, err
 	}
 	appendCalendarEventQueryParams(request, filter, fields)
 
-	response, err := httpClient.Do(request)
+	response, err := service.httpClient.Do(request)
 	if err != nil {
 		return nil, err
 	}
@@ -87,18 +129,18 @@ func (client *botAPI) GetCalendarEventAll(ctx context.Context, filter calendarEv
 	return calendarEvents, nil
 }
 
-func (client *botAPI) CreateCalendarEvent(ctx context.Context, calendarEvent calendarEventModel.CalendarEvent) (*calendarEventModel.CalendarEvent, error) {
+func (service *calendarEventService) CreateCalendarEvent(ctx context.Context, calendarEvent calendarEventModel.CalendarEvent) (*calendarEventModel.CalendarEvent, error) {
 	data, err := json.Marshal(&calendarEvent)
 	if err != nil {
 		return nil, err
 	}
 
-	request, err := client.createRequest(ctx, http.MethodPost, calendarEventBasePath, bytes.NewReader(data))
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodPost, calendarEventBasePath, bytes.NewReader(data))
 	if err != nil {
 		return nil, err
 	}
 
-	response, err := httpClient.Do(request)
+	response, err := service.httpClient.Do(request)
 	if err != nil {
 		return nil, err
 	}
@@ -115,18 +157,18 @@ func (client *botAPI) CreateCalendarEvent(ctx context.Context, calendarEvent cal
 	return &calendarEvent, err
 }
 
-func (client *botAPI) UpdateCalendarEvent(ctx context.Context, calendarEvent calendarEventModel.CalendarEvent) (*calendarEventModel.CalendarEvent, error) {
+func (service *calendarEventService) UpdateCalendarEvent(ctx context.Context, calendarEvent calendarEventModel.CalendarEvent) (*calendarEventModel.CalendarEvent, error) {
 	data, err := json.Marshal(&calendarEvent)
 	if err != nil {
 		return nil, err
 	}
 
-	request, err := client.createRequest(ctx, http.MethodPut, calendarEventBasePath, bytes.NewReader(data))
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodPut, calendarEventBasePath, bytes.NewReader(data))
 	if err != nil {
 		return nil, err
 	}
 
-	response, err := httpClient.Do(request)
+	response, err := service.httpClient.Do(request)
 	if err != nil {
 		return nil, err
 	}
@@ -143,13 +185,13 @@ func (client *botAPI) UpdateCalendarEvent(ctx context.Context, calendarEvent cal
 	return &calendarEvent, err
 }
 
-func (client *botAPI) DeleteCalendarEventById(ctx context.Context, calendarEventId string) error {
-	request, err := client.createRequest(ctx, http.MethodDelete, fmt.Sprintf("%s/%s", calendarEventBasePath, calendarEventId), nil)
+func (service *calendarEventService) DeleteCalendarEventById(ctx context.Context, calendarEventId string) error {
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodDelete, fmt.Sprintf("%s/%s", calendarEventBasePath, calendarEventId), nil)
 	if err != nil {
 		return err
 	}
 
-	response, err := httpClient.Do(request)
+	response, err := service.httpClient.Do(request)
 	if err != nil {
 		return err
 	}

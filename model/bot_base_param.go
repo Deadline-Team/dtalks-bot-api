@@ -1,4 +1,4 @@
-package dtalks_bot_api
+package model
 
 /*
  * Copyright © 2023, "DEADLINE TEAM" LLC
@@ -24,37 +24,8 @@ package dtalks_bot_api
  * © "DEADLINE TEAM" LLC, All rights reserved.
  */
 
-import (
-	"context"
-	"encoding/json"
-	"errors"
-	"github.com/deadline-team/dtalks-bot-api/model"
-	conversationModel "github.com/deadline-team/dtalks-bot-api/model/conversation"
-	"net/http"
-)
-
-const conversationBasePath = "/api/conversation/conversations"
-
-func (client *botAPI) GetConversationAll(ctx context.Context) ([]conversationModel.Conversation, error) {
-	request, err := client.createRequest(ctx, http.MethodGet, conversationBasePath, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	response, err := httpClient.Do(request)
-	if err != nil {
-		return nil, err
-	}
-	if response.StatusCode != 200 {
-		return nil, errors.New(response.Status)
-	}
-	var conversationPage model.Page[conversationModel.Conversation]
-	if err := json.NewDecoder(response.Body).Decode(&conversationPage); err != nil {
-		return nil, err
-	}
-	if err = response.Body.Close(); err != nil {
-		return nil, err
-	}
-
-	return conversationPage.Content, nil
+type BotBaseParam struct {
+	Host   string
+	ApiKey string
+	Secure bool
 }

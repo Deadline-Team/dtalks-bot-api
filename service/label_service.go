@@ -1,4 +1,4 @@
-package dtalks_bot_api
+package service
 
 /*
  * Copyright © 2023, "DEADLINE TEAM" LLC
@@ -32,19 +32,61 @@ import (
 	"fmt"
 	"github.com/deadline-team/dtalks-bot-api/model"
 	conversationModel "github.com/deadline-team/dtalks-bot-api/model/conversation"
+	"github.com/deadline-team/dtalks-bot-api/util"
 	"net/http"
+	"time"
 )
 
 const labelBasePath = "/api/conversation/labels"
 
-func (client *botAPI) GetLabelById(ctx context.Context, labelId string, fields string) (*conversationModel.Label, error) {
-	request, err := client.createRequest(ctx, http.MethodGet, fmt.Sprintf("%s/%s", labelBasePath, labelId), nil)
+var labelSrv LabelService
+
+type LabelService interface {
+	// GetLabelById
+	// Метод для получения меток по ID
+	GetLabelById(ctx context.Context, labelId string, fields string) (*conversationModel.Label, error)
+
+	// GetLabelAll
+	// Метод для получения всех меток с фильтрацией
+	GetLabelAll(ctx context.Context, page model.Pageable, filter conversationModel.LabelFilter, fields string) (*model.Page[conversationModel.Label], error)
+
+	// CreateLabel
+	// Метод для создания меток
+	CreateLabel(ctx context.Context, label conversationModel.Label) (*conversationModel.Label, error)
+
+	// UpdateLabel
+	// Метод для обновления меток
+	UpdateLabel(ctx context.Context, label conversationModel.Label) (*conversationModel.Label, error)
+
+	// DeleteLabelById
+	// Метод для удаления меток по ID
+	DeleteLabelById(ctx context.Context, labelId string) error
+}
+
+type labelService struct {
+	model.BotBaseParam
+	httpClient *http.Client
+}
+
+func NewLabelService(botBaseParam model.BotBaseParam) LabelService {
+	if labelSrv != nil {
+		return labelSrv
+	}
+	labelSrv = &labelService{
+		BotBaseParam: botBaseParam,
+		httpClient:   &http.Client{Timeout: time.Second * 30},
+	}
+	return labelSrv
+}
+
+func (service *labelService) GetLabelById(ctx context.Context, labelId string, fields string) (*conversationModel.Label, error) {
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodGet, fmt.Sprintf("%s/%s", labelBasePath, labelId), nil)
 	if err != nil {
 		return nil, err
 	}
 	appendLabelQueryParams(request, model.Pageable{}, conversationModel.LabelFilter{}, fields)
 
-	response, err := httpClient.Do(request)
+	response, err := service.httpClient.Do(request)
 	if err != nil {
 		return nil, err
 	}
@@ -62,14 +104,14 @@ func (client *botAPI) GetLabelById(ctx context.Context, labelId string, fields s
 	return label, nil
 }
 
-func (client *botAPI) GetLabelAll(ctx context.Context, page model.Pageable, filter conversationModel.LabelFilter, fields string) (*model.Page[conversationModel.Label], error) {
-	request, err := client.createRequest(ctx, http.MethodGet, labelBasePath, nil)
+func (service *labelService) GetLabelAll(ctx context.Context, page model.Pageable, filter conversationModel.LabelFilter, fields string) (*model.Page[conversationModel.Label], error) {
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodGet, labelBasePath, nil)
 	if err != nil {
 		return nil, err
 	}
 	appendLabelQueryParams(request, page, filter, fields)
 
-	response, err := httpClient.Do(request)
+	response, err := service.httpClient.Do(request)
 	if err != nil {
 		return nil, err
 	}
@@ -87,18 +129,18 @@ func (client *botAPI) GetLabelAll(ctx context.Context, page model.Pageable, filt
 	return &labels, nil
 }
 
-func (client *botAPI) CreateLabel(ctx context.Context, label conversationModel.Label) (*conversationModel.Label, error) {
+func (service *labelService) CreateLabel(ctx context.Context, label conversationModel.Label) (*conversationModel.Label, error) {
 	data, err := json.Marshal(&label)
 	if err != nil {
 		return nil, err
 	}
 
-	request, err := client.createRequest(ctx, http.MethodPost, labelBasePath, bytes.NewReader(data))
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodPost, labelBasePath, bytes.NewReader(data))
 	if err != nil {
 		return nil, err
 	}
 
-	response, err := httpClient.Do(request)
+	response, err := service.httpClient.Do(request)
 	if err != nil {
 		return nil, err
 	}
@@ -115,18 +157,18 @@ func (client *botAPI) CreateLabel(ctx context.Context, label conversationModel.L
 	return &label, err
 }
 
-func (client *botAPI) UpdateLabel(ctx context.Context, label conversationModel.Label) (*conversationModel.Label, error) {
+func (service *labelService) UpdateLabel(ctx context.Context, label conversationModel.Label) (*conversationModel.Label, error) {
 	data, err := json.Marshal(&label)
 	if err != nil {
 		return nil, err
 	}
 
-	request, err := client.createRequest(ctx, http.MethodPut, labelBasePath, bytes.NewReader(data))
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodPut, labelBasePath, bytes.NewReader(data))
 	if err != nil {
 		return nil, err
 	}
 
-	response, err := httpClient.Do(request)
+	response, err := service.httpClient.Do(request)
 	if err != nil {
 		return nil, err
 	}
@@ -143,13 +185,13 @@ func (client *botAPI) UpdateLabel(ctx context.Context, label conversationModel.L
 	return &label, err
 }
 
-func (client *botAPI) DeleteLabelById(ctx context.Context, labelId string) error {
-	request, err := client.createRequest(ctx, http.MethodDelete, fmt.Sprintf("%s/%s", labelBasePath, labelId), nil)
+func (service *labelService) DeleteLabelById(ctx context.Context, labelId string) error {
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodDelete, fmt.Sprintf("%s/%s", labelBasePath, labelId), nil)
 	if err != nil {
 		return err
 	}
 
-	response, err := httpClient.Do(request)
+	response, err := service.httpClient.Do(request)
 	if err != nil {
 		return err
 	}

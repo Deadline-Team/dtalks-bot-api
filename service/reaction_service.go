@@ -1,4 +1,4 @@
-package dtalks_bot_api
+package service
 
 /*
  * Copyright © 2023, "DEADLINE TEAM" LLC
@@ -32,19 +32,61 @@ import (
 	"fmt"
 	"github.com/deadline-team/dtalks-bot-api/model"
 	conversationModel "github.com/deadline-team/dtalks-bot-api/model/conversation"
+	"github.com/deadline-team/dtalks-bot-api/util"
 	"net/http"
+	"time"
 )
 
 const reactionBasePath = "/api/conversation/reactions"
 
-func (client *botAPI) GetReactionById(ctx context.Context, reactionId string, fields string) (*conversationModel.Reaction, error) {
-	request, err := client.createRequest(ctx, http.MethodGet, fmt.Sprintf("%s/%s", reactionBasePath, reactionId), nil)
+var reactionSrv ReactionService
+
+type ReactionService interface {
+	// GetReactionById
+	// Метод для получения реакций по ID
+	GetReactionById(ctx context.Context, reactionId string, fields string) (*conversationModel.Reaction, error)
+
+	// GetReactionAll
+	// Метод для получения всех реакций с фильтрацией
+	GetReactionAll(ctx context.Context, page model.Pageable, filter conversationModel.ReactionFilter, fields string) (*model.Page[conversationModel.Reaction], error)
+
+	// CreateReaction
+	// Метод для создания реакций
+	CreateReaction(ctx context.Context, reaction conversationModel.Reaction) (*conversationModel.Reaction, error)
+
+	// UpdateReaction
+	// Метод для обновления реакций
+	UpdateReaction(ctx context.Context, reaction conversationModel.Reaction) (*conversationModel.Reaction, error)
+
+	// DeleteReactionById
+	// Метод для удаления реакций по ID
+	DeleteReactionById(ctx context.Context, reactionId string) error
+}
+
+type reactionService struct {
+	model.BotBaseParam
+	httpClient *http.Client
+}
+
+func NewReactionService(botBaseParam model.BotBaseParam) ReactionService {
+	if reactionSrv != nil {
+		return reactionSrv
+	}
+	reactionSrv = &reactionService{
+		BotBaseParam: botBaseParam,
+		httpClient:   &http.Client{Timeout: time.Second * 30},
+	}
+	return reactionSrv
+}
+
+func (service *reactionService) GetReactionById(ctx context.Context, reactionId string, fields string) (*conversationModel.Reaction, error) {
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodGet, fmt.Sprintf("%s/%s", reactionBasePath, reactionId), nil)
 	if err != nil {
 		return nil, err
 	}
 	appendReactionQueryParams(request, model.Pageable{}, conversationModel.ReactionFilter{}, fields)
 
-	response, err := httpClient.Do(request)
+	response, err := service.httpClient.Do(request)
 	if err != nil {
 		return nil, err
 	}
@@ -62,14 +104,14 @@ func (client *botAPI) GetReactionById(ctx context.Context, reactionId string, fi
 	return reaction, nil
 }
 
-func (client *botAPI) GetReactionAll(ctx context.Context, page model.Pageable, filter conversationModel.ReactionFilter, fields string) (*model.Page[conversationModel.Reaction], error) {
-	request, err := client.createRequest(ctx, http.MethodGet, reactionBasePath, nil)
+func (service *reactionService) GetReactionAll(ctx context.Context, page model.Pageable, filter conversationModel.ReactionFilter, fields string) (*model.Page[conversationModel.Reaction], error) {
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodGet, reactionBasePath, nil)
 	if err != nil {
 		return nil, err
 	}
 	appendReactionQueryParams(request, page, filter, fields)
 
-	response, err := httpClient.Do(request)
+	response, err := service.httpClient.Do(request)
 	if err != nil {
 		return nil, err
 	}
@@ -87,18 +129,18 @@ func (client *botAPI) GetReactionAll(ctx context.Context, page model.Pageable, f
 	return &reactions, nil
 }
 
-func (client *botAPI) CreateReaction(ctx context.Context, reaction conversationModel.Reaction) (*conversationModel.Reaction, error) {
+func (service *reactionService) CreateReaction(ctx context.Context, reaction conversationModel.Reaction) (*conversationModel.Reaction, error) {
 	data, err := json.Marshal(&reaction)
 	if err != nil {
 		return nil, err
 	}
 
-	request, err := client.createRequest(ctx, http.MethodPost, reactionBasePath, bytes.NewReader(data))
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodPost, reactionBasePath, bytes.NewReader(data))
 	if err != nil {
 		return nil, err
 	}
 
-	response, err := httpClient.Do(request)
+	response, err := service.httpClient.Do(request)
 	if err != nil {
 		return nil, err
 	}
@@ -115,18 +157,18 @@ func (client *botAPI) CreateReaction(ctx context.Context, reaction conversationM
 	return &reaction, err
 }
 
-func (client *botAPI) UpdateReaction(ctx context.Context, reaction conversationModel.Reaction) (*conversationModel.Reaction, error) {
+func (service *reactionService) UpdateReaction(ctx context.Context, reaction conversationModel.Reaction) (*conversationModel.Reaction, error) {
 	data, err := json.Marshal(&reaction)
 	if err != nil {
 		return nil, err
 	}
 
-	request, err := client.createRequest(ctx, http.MethodPut, reactionBasePath, bytes.NewReader(data))
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodPut, reactionBasePath, bytes.NewReader(data))
 	if err != nil {
 		return nil, err
 	}
 
-	response, err := httpClient.Do(request)
+	response, err := service.httpClient.Do(request)
 	if err != nil {
 		return nil, err
 	}
@@ -143,13 +185,13 @@ func (client *botAPI) UpdateReaction(ctx context.Context, reaction conversationM
 	return &reaction, err
 }
 
-func (client *botAPI) DeleteReactionById(ctx context.Context, reactionId string) error {
-	request, err := client.createRequest(ctx, http.MethodDelete, fmt.Sprintf("%s/%s", reactionBasePath, reactionId), nil)
+func (service *reactionService) DeleteReactionById(ctx context.Context, reactionId string) error {
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodDelete, fmt.Sprintf("%s/%s", reactionBasePath, reactionId), nil)
 	if err != nil {
 		return err
 	}
 
-	response, err := httpClient.Do(request)
+	response, err := service.httpClient.Do(request)
 	if err != nil {
 		return err
 	}

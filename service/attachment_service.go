@@ -1,4 +1,4 @@
-package dtalks_bot_api
+package service
 
 /*
  * Copyright © 2023, "DEADLINE TEAM" LLC
@@ -29,14 +29,43 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/deadline-team/dtalks-bot-api/model"
 	attachmentModel "github.com/deadline-team/dtalks-bot-api/model/attachment"
+	"github.com/deadline-team/dtalks-bot-api/util"
 	"mime/multipart"
 	"net/http"
+	"time"
 )
 
 const attachmentBasePath = "/api/attachment/attachments"
 
-func (client *botAPI) CreateAttachment(ctx context.Context, fileName string, data []byte) (*attachmentModel.Attachment, error) {
+var attachmentSrv AttachmentService
+
+type AttachmentService interface {
+	// CreateAttachment
+	// Метод для создания вложения на сервере
+	CreateAttachment(ctx context.Context, fileName string, data []byte) (*attachmentModel.Attachment, error)
+	//TODO GetAttachmentById(ctx context.Context, attachmentId string) ([]byte, error)
+	//TODO GetAttachmentMetaById(ctx context.Context, attachmentId string) (*attachmentModel.Attachment, error)
+}
+
+type attachmentService struct {
+	model.BotBaseParam
+	httpClient *http.Client
+}
+
+func NewAttachmentService(botBaseParam model.BotBaseParam) AttachmentService {
+	if attachmentSrv != nil {
+		return attachmentSrv
+	}
+	attachmentSrv = &attachmentService{
+		BotBaseParam: botBaseParam,
+		httpClient:   &http.Client{Timeout: time.Second * 30},
+	}
+	return attachmentSrv
+}
+
+func (service *attachmentService) CreateAttachment(ctx context.Context, fileName string, data []byte) (*attachmentModel.Attachment, error) {
 	buf := new(bytes.Buffer)
 	bw := multipart.NewWriter(buf)
 	fw, err := bw.CreateFormFile("file", fileName)
@@ -51,13 +80,13 @@ func (client *botAPI) CreateAttachment(ctx context.Context, fileName string, dat
 		return nil, err
 	}
 
-	request, err := client.createRequest(ctx, http.MethodPost, attachmentBasePath, buf)
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodPost, attachmentBasePath, buf)
 	if err != nil {
 		return nil, err
 	}
 	request.Header.Set("Content-Type", bw.FormDataContentType())
 
-	response, err := httpClient.Do(request)
+	response, err := service.httpClient.Do(request)
 	if err != nil {
 		return nil, err
 	}

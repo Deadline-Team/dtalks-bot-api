@@ -1,4 +1,4 @@
-package dtalks_bot_api
+package service
 
 /*
  * Copyright © 2023, "DEADLINE TEAM" LLC
@@ -30,20 +30,67 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/deadline-team/dtalks-bot-api/model"
 	taskModel "github.com/deadline-team/dtalks-bot-api/model/task"
+	"github.com/deadline-team/dtalks-bot-api/util"
 	"net/http"
+	"time"
 )
 
 const taskBasePath = "/api/task/tasks"
 
-func (client *botAPI) GetTaskById(ctx context.Context, taskId string, fields string) (*taskModel.Task, error) {
-	request, err := client.createRequest(ctx, http.MethodGet, fmt.Sprintf("%s/%s", taskBasePath, taskId), nil)
+var taskSrv TaskService
+
+type TaskService interface {
+	// GetTaskById
+	// Метод для получения задач по ID
+	GetTaskById(ctx context.Context, taskId string, fields string) (*taskModel.Task, error)
+
+	// GetTaskAll
+	// Метод для получения всех задач с фильтрацией
+	GetTaskAll(ctx context.Context, filter taskModel.TaskFilter, fields string) ([]taskModel.Task, error)
+
+	// CreateTask
+	// Метод для создания задач
+	CreateTask(ctx context.Context, task taskModel.Task) (*taskModel.Task, error)
+
+	// UpdateTask
+	// Метод для обновления задач
+	UpdateTask(ctx context.Context, task taskModel.Task) (*taskModel.Task, error)
+
+	// DeleteTaskById
+	// Метод для удаления задач по ID
+	DeleteTaskById(ctx context.Context, taskId string) error
+
+	// ResolveTaskById
+	// Метод для маркировки задач как исполненной
+	ResolveTaskById(ctx context.Context, taskId string) error
+}
+
+type taskService struct {
+	model.BotBaseParam
+	httpClient *http.Client
+}
+
+func NewTaskService(botBaseParam model.BotBaseParam) TaskService {
+	if taskSrv != nil {
+		return taskSrv
+	}
+	taskSrv = &taskService{
+		BotBaseParam: botBaseParam,
+		httpClient:   &http.Client{Timeout: time.Second * 30},
+	}
+	return taskSrv
+}
+
+func (service *taskService) GetTaskById(ctx context.Context, taskId string, fields string) (*taskModel.Task, error) {
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodGet, fmt.Sprintf("%s/%s", taskBasePath, taskId), nil)
 	if err != nil {
 		return nil, err
 	}
 	appendTaskQueryParams(request, taskModel.TaskFilter{}, fields)
 
-	response, err := httpClient.Do(request)
+	response, err := service.httpClient.Do(request)
 	if err != nil {
 		return nil, err
 	}
@@ -61,14 +108,14 @@ func (client *botAPI) GetTaskById(ctx context.Context, taskId string, fields str
 	return task, nil
 }
 
-func (client *botAPI) GetTaskAll(ctx context.Context, filter taskModel.TaskFilter, fields string) ([]taskModel.Task, error) {
-	request, err := client.createRequest(ctx, http.MethodGet, taskBasePath, nil)
+func (service *taskService) GetTaskAll(ctx context.Context, filter taskModel.TaskFilter, fields string) ([]taskModel.Task, error) {
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodGet, taskBasePath, nil)
 	if err != nil {
 		return nil, err
 	}
 	appendTaskQueryParams(request, filter, fields)
 
-	response, err := httpClient.Do(request)
+	response, err := service.httpClient.Do(request)
 	if err != nil {
 		return nil, err
 	}
@@ -86,18 +133,18 @@ func (client *botAPI) GetTaskAll(ctx context.Context, filter taskModel.TaskFilte
 	return tasks, nil
 }
 
-func (client *botAPI) CreateTask(ctx context.Context, task taskModel.Task) (*taskModel.Task, error) {
+func (service *taskService) CreateTask(ctx context.Context, task taskModel.Task) (*taskModel.Task, error) {
 	data, err := json.Marshal(&task)
 	if err != nil {
 		return nil, err
 	}
 
-	request, err := client.createRequest(ctx, http.MethodPost, taskBasePath, bytes.NewReader(data))
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodPost, taskBasePath, bytes.NewReader(data))
 	if err != nil {
 		return nil, err
 	}
 
-	response, err := httpClient.Do(request)
+	response, err := service.httpClient.Do(request)
 	if err != nil {
 		return nil, err
 	}
@@ -114,18 +161,18 @@ func (client *botAPI) CreateTask(ctx context.Context, task taskModel.Task) (*tas
 	return &task, err
 }
 
-func (client *botAPI) UpdateTask(ctx context.Context, task taskModel.Task) (*taskModel.Task, error) {
+func (service *taskService) UpdateTask(ctx context.Context, task taskModel.Task) (*taskModel.Task, error) {
 	data, err := json.Marshal(&task)
 	if err != nil {
 		return nil, err
 	}
 
-	request, err := client.createRequest(ctx, http.MethodPut, taskBasePath, bytes.NewReader(data))
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodPut, taskBasePath, bytes.NewReader(data))
 	if err != nil {
 		return nil, err
 	}
 
-	response, err := httpClient.Do(request)
+	response, err := service.httpClient.Do(request)
 	if err != nil {
 		return nil, err
 	}
@@ -142,13 +189,13 @@ func (client *botAPI) UpdateTask(ctx context.Context, task taskModel.Task) (*tas
 	return &task, err
 }
 
-func (client *botAPI) DeleteTaskById(ctx context.Context, taskId string) error {
-	request, err := client.createRequest(ctx, http.MethodDelete, fmt.Sprintf("%s/%s", taskBasePath, taskId), nil)
+func (service *taskService) DeleteTaskById(ctx context.Context, taskId string) error {
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodDelete, fmt.Sprintf("%s/%s", taskBasePath, taskId), nil)
 	if err != nil {
 		return err
 	}
 
-	response, err := httpClient.Do(request)
+	response, err := service.httpClient.Do(request)
 	if err != nil {
 		return err
 	}
@@ -161,13 +208,13 @@ func (client *botAPI) DeleteTaskById(ctx context.Context, taskId string) error {
 	return nil
 }
 
-func (client *botAPI) ResolveTaskById(ctx context.Context, taskId string) error {
-	request, err := client.createRequest(ctx, http.MethodPut, fmt.Sprintf("%s/%s/resolve", taskBasePath, taskId), nil)
+func (service *taskService) ResolveTaskById(ctx context.Context, taskId string) error {
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodPut, fmt.Sprintf("%s/%s/resolve", taskBasePath, taskId), nil)
 	if err != nil {
 		return err
 	}
 
-	response, err := httpClient.Do(request)
+	response, err := service.httpClient.Do(request)
 	if err != nil {
 		return err
 	}

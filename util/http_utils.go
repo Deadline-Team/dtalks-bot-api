@@ -1,4 +1,4 @@
-package dtalks_bot_api
+package util
 
 /*
  * Copyright © 2023, "DEADLINE TEAM" LLC
@@ -25,39 +25,24 @@ package dtalks_bot_api
  */
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
-	"errors"
 	"fmt"
-	conversationModel "github.com/deadline-team/dtalks-bot-api/model/conversation"
+	"github.com/deadline-team/dtalks-bot-api/model"
+	"io"
 	"net/http"
 )
 
-func (client *botAPI) CreateMessage(ctx context.Context, conversationId string, message conversationModel.Message) (*conversationModel.Message, error) {
-	data, err := json.Marshal(&message)
+func CreateHttpRequest(ctx context.Context, botBaseParam model.BotBaseParam, method string, path string, body io.Reader) (*http.Request, error) {
+	schema := "http"
+	if botBaseParam.Secure {
+		schema = "https"
+	}
+
+	request, err := http.NewRequestWithContext(ctx, method, fmt.Sprintf("%s://%s%s", schema, botBaseParam.Host, path), body)
 	if err != nil {
 		return nil, err
 	}
-
-	request, err := client.createRequest(ctx, http.MethodPost, fmt.Sprintf("%s/%s/messages", conversationBasePath, conversationId), bytes.NewReader(data))
-	if err != nil {
-		return nil, err
-	}
-
-	response, err := httpClient.Do(request)
-	if err != nil {
-		return nil, err
-	}
-	if response.StatusCode != 201 {
-		return nil, errors.New(response.Status)
-	}
-	if err := json.NewDecoder(response.Body).Decode(&message); err != nil {
-		return nil, err
-	}
-	if err = response.Body.Close(); err != nil {
-		return nil, err
-	}
-
-	return &message, err
+	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", botBaseParam.ApiKey))
+	request.Header.Set("Content-Type", "application/json")
+	return request, err
 }
