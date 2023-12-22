@@ -34,6 +34,8 @@ import (
 	"net/http"
 )
 
+const attachmentBasePath = "/api/attachment/attachments"
+
 func (client *botAPI) CreateAttachment(ctx context.Context, fileName string, data []byte) (*attachmentModel.Attachment, error) {
 	buf := new(bytes.Buffer)
 	bw := multipart.NewWriter(buf)
@@ -49,7 +51,7 @@ func (client *botAPI) CreateAttachment(ctx context.Context, fileName string, dat
 		return nil, err
 	}
 
-	request, err := client.createRequest(ctx, http.MethodPost, "/api/attachment/attachments", buf)
+	request, err := client.createRequest(ctx, http.MethodPost, attachmentBasePath, buf)
 	if err != nil {
 		return nil, err
 	}

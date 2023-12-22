@@ -29,3 +29,8 @@ type Reaction struct {
 	Value     string `json:"value,omitempty"`
 	Invisible bool   `json:"invisible,omitempty"`
 }
+
+type ReactionFilter struct {
+	IDs   []string `form:"ids"`
+	Value string   `form:"value"`
+}

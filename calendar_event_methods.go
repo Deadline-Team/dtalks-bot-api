@@ -30,18 +30,19 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	taskModel "github.com/deadline-team/dtalks-bot-api/model/task"
+	calendarEventModel "github.com/deadline-team/dtalks-bot-api/model/calendar_event"
 	"net/http"
+	"time"
 )
 
-const taskBasePath = "/api/task/tasks"
+const calendarEventBasePath = "/api/calendarEvent/calendarEvents"
 
-func (client *botAPI) GetTaskById(ctx context.Context, taskId string, fields string) (*taskModel.Task, error) {
-	request, err := client.createRequest(ctx, http.MethodGet, fmt.Sprintf("%s/%s", taskBasePath, taskId), nil)
+func (client *botAPI) GetCalendarEventById(ctx context.Context, calendarEventId string, fields string) (*calendarEventModel.CalendarEvent, error) {
+	request, err := client.createRequest(ctx, http.MethodGet, fmt.Sprintf("%s/%s", calendarEventBasePath, calendarEventId), nil)
 	if err != nil {
 		return nil, err
 	}
-	appendTaskQueryParams(request, taskModel.TaskFilter{}, fields)
+	appendCalendarEventQueryParams(request, calendarEventModel.CalendarEventFilter{}, fields)
 
 	response, err := httpClient.Do(request)
 	if err != nil {
@@ -51,22 +52,22 @@ func (client *botAPI) GetTaskById(ctx context.Context, taskId string, fields str
 		return nil, errors.New(response.Status)
 	}
 
-	var task *taskModel.Task
-	if err := json.NewDecoder(response.Body).Decode(task); err != nil {
+	var calendarEvent *calendarEventModel.CalendarEvent
+	if err := json.NewDecoder(response.Body).Decode(calendarEvent); err != nil {
 		return nil, err
 	}
 	if err = response.Body.Close(); err != nil {
 		return nil, err
 	}
-	return task, nil
+	return calendarEvent, nil
 }
 
-func (client *botAPI) GetTaskAll(ctx context.Context, filter taskModel.TaskFilter, fields string) ([]taskModel.Task, error) {
-	request, err := client.createRequest(ctx, http.MethodGet, taskBasePath, nil)
+func (client *botAPI) GetCalendarEventAll(ctx context.Context, filter calendarEventModel.CalendarEventFilter, fields string) ([]calendarEventModel.CalendarEvent, error) {
+	request, err := client.createRequest(ctx, http.MethodGet, calendarEventBasePath, nil)
 	if err != nil {
 		return nil, err
 	}
-	appendTaskQueryParams(request, filter, fields)
+	appendCalendarEventQueryParams(request, filter, fields)
 
 	response, err := httpClient.Do(request)
 	if err != nil {
@@ -76,23 +77,23 @@ func (client *botAPI) GetTaskAll(ctx context.Context, filter taskModel.TaskFilte
 		return nil, errors.New(response.Status)
 	}
 
-	var tasks []taskModel.Task
-	if err := json.NewDecoder(response.Body).Decode(&tasks); err != nil {
+	var calendarEvents []calendarEventModel.CalendarEvent
+	if err := json.NewDecoder(response.Body).Decode(&calendarEvents); err != nil {
 		return nil, err
 	}
 	if err = response.Body.Close(); err != nil {
 		return nil, err
 	}
-	return tasks, nil
+	return calendarEvents, nil
 }
 
-func (client *botAPI) CreateTask(ctx context.Context, task taskModel.Task) (*taskModel.Task, error) {
-	data, err := json.Marshal(&task)
+func (client *botAPI) CreateCalendarEvent(ctx context.Context, calendarEvent calendarEventModel.CalendarEvent) (*calendarEventModel.CalendarEvent, error) {
+	data, err := json.Marshal(&calendarEvent)
 	if err != nil {
 		return nil, err
 	}
 
-	request, err := client.createRequest(ctx, http.MethodPost, taskBasePath, bytes.NewReader(data))
+	request, err := client.createRequest(ctx, http.MethodPost, calendarEventBasePath, bytes.NewReader(data))
 	if err != nil {
 		return nil, err
 	}
@@ -104,23 +105,23 @@ func (client *botAPI) CreateTask(ctx context.Context, task taskModel.Task) (*tas
 	if response.StatusCode != 201 {
 		return nil, errors.New(response.Status)
 	}
-	if err := json.NewDecoder(response.Body).Decode(&task); err != nil {
+	if err := json.NewDecoder(response.Body).Decode(&calendarEvent); err != nil {
 		return nil, err
 	}
 	if err = response.Body.Close(); err != nil {
 		return nil, err
 	}
 
-	return &task, err
+	return &calendarEvent, err
 }
 
-func (client *botAPI) UpdateTask(ctx context.Context, task taskModel.Task) (*taskModel.Task, error) {
-	data, err := json.Marshal(&task)
+func (client *botAPI) UpdateCalendarEvent(ctx context.Context, calendarEvent calendarEventModel.CalendarEvent) (*calendarEventModel.CalendarEvent, error) {
+	data, err := json.Marshal(&calendarEvent)
 	if err != nil {
 		return nil, err
 	}
 
-	request, err := client.createRequest(ctx, http.MethodPut, taskBasePath, bytes.NewReader(data))
+	request, err := client.createRequest(ctx, http.MethodPut, calendarEventBasePath, bytes.NewReader(data))
 	if err != nil {
 		return nil, err
 	}
@@ -132,18 +133,18 @@ func (client *botAPI) UpdateTask(ctx context.Context, task taskModel.Task) (*tas
 	if response.StatusCode != 200 {
 		return nil, errors.New(response.Status)
 	}
-	if err := json.NewDecoder(response.Body).Decode(&task); err != nil {
+	if err := json.NewDecoder(response.Body).Decode(&calendarEvent); err != nil {
 		return nil, err
 	}
 	if err = response.Body.Close(); err != nil {
 		return nil, err
 	}
 
-	return &task, err
+	return &calendarEvent, err
 }
 
-func (client *botAPI) DeleteTaskById(ctx context.Context, taskId string) error {
-	request, err := client.createRequest(ctx, http.MethodDelete, fmt.Sprintf("%s/%s", taskBasePath, taskId), nil)
+func (client *botAPI) DeleteCalendarEventById(ctx context.Context, calendarEventId string) error {
+	request, err := client.createRequest(ctx, http.MethodDelete, fmt.Sprintf("%s/%s", calendarEventBasePath, calendarEventId), nil)
 	if err != nil {
 		return err
 	}
@@ -161,36 +162,20 @@ func (client *botAPI) DeleteTaskById(ctx context.Context, taskId string) error {
 	return nil
 }
 
-func (client *botAPI) ResolveTaskById(ctx context.Context, taskId string) error {
-	request, err := client.createRequest(ctx, http.MethodPut, fmt.Sprintf("%s/%s/resolve", taskBasePath, taskId), nil)
-	if err != nil {
-		return err
-	}
-
-	response, err := httpClient.Do(request)
-	if err != nil {
-		return err
-	}
-	if response.StatusCode != 200 {
-		return errors.New(response.Status)
-	}
-	if err = response.Body.Close(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func appendTaskQueryParams(request *http.Request, filter taskModel.TaskFilter, fields string) {
+func appendCalendarEventQueryParams(request *http.Request, filter calendarEventModel.CalendarEventFilter, fields string) {
 	if filter.IDs != nil && len(filter.IDs) > 0 {
 		for _, id := range filter.IDs {
 			request.Form.Add("ids", id)
 		}
 	}
-	if filter.ConversationId != "" {
-		request.Form.Set("conversationId", filter.ConversationId)
+	if filter.AllUsers {
+		request.Form.Set("allUsers", fmt.Sprintf("%t", filter.AllUsers))
 	}
-	if filter.Resolved {
-		request.Form.Set("resolved", fmt.Sprintf("%t", filter.Resolved))
+	if filter.PeriodStartDate != nil {
+		request.Form.Set("periodStartDate", filter.PeriodStartDate.Format(time.RFC3339))
+	}
+	if filter.PeriodEndDate != nil {
+		request.Form.Set("periodEndDate", filter.PeriodEndDate.Format(time.RFC3339))
 	}
 	if filter.Search != "" {
 		request.Form.Set("search", filter.Search)

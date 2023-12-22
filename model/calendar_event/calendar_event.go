@@ -70,3 +70,11 @@ type CalendarEvent struct {
 	MembersStatuses MembersStatusesMap            `json:"membersStatuses,omitempty"`
 	Attachments     []*attachmentModel.Attachment `json:"attachments,omitempty"`
 }
+
+type CalendarEventFilter struct {
+	IDs             []string   `form:"ids"`
+	AllUsers        bool       `form:"allUsers"`
+	PeriodStartDate *time.Time `form:"periodStartDate"`
+	PeriodEndDate   *time.Time `form:"periodEndDate"`
+	Search          string     `form:"search"`
+}

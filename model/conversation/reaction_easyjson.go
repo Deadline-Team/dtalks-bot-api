@@ -17,7 +17,112 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjson121d77adDecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in *jlexer.Lexer, out *Reaction) {
+func easyjson121d77adDecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in *jlexer.Lexer, out *ReactionFilter) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "IDs":
+			if in.IsNull() {
+				in.Skip()
+				out.IDs = nil
+			} else {
+				in.Delim('[')
+				if out.IDs == nil {
+					if !in.IsDelim(']') {
+						out.IDs = make([]string, 0, 4)
+					} else {
+						out.IDs = []string{}
+					}
+				} else {
+					out.IDs = (out.IDs)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v1 string
+					v1 = string(in.String())
+					out.IDs = append(out.IDs, v1)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "Value":
+			out.Value = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson121d77adEncodeGithubComDeadlineTeamDtalksBotApiModelConversation(out *jwriter.Writer, in ReactionFilter) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"IDs\":"
+		out.RawString(prefix[1:])
+		if in.IDs == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v2, v3 := range in.IDs {
+				if v2 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v3))
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"Value\":"
+		out.RawString(prefix)
+		out.String(string(in.Value))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v ReactionFilter) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson121d77adEncodeGithubComDeadlineTeamDtalksBotApiModelConversation(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v ReactionFilter) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson121d77adEncodeGithubComDeadlineTeamDtalksBotApiModelConversation(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *ReactionFilter) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson121d77adDecodeGithubComDeadlineTeamDtalksBotApiModelConversation(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *ReactionFilter) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson121d77adDecodeGithubComDeadlineTeamDtalksBotApiModelConversation(l, v)
+}
+func easyjson121d77adDecodeGithubComDeadlineTeamDtalksBotApiModelConversation1(in *jlexer.Lexer, out *Reaction) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -52,7 +157,7 @@ func easyjson121d77adDecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 		in.Consumed()
 	}
 }
-func easyjson121d77adEncodeGithubComDeadlineTeamDtalksBotApiModelConversation(out *jwriter.Writer, in Reaction) {
+func easyjson121d77adEncodeGithubComDeadlineTeamDtalksBotApiModelConversation1(out *jwriter.Writer, in Reaction) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -88,23 +193,23 @@ func easyjson121d77adEncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 // MarshalJSON supports json.Marshaler interface
 func (v Reaction) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson121d77adEncodeGithubComDeadlineTeamDtalksBotApiModelConversation(&w, v)
+	easyjson121d77adEncodeGithubComDeadlineTeamDtalksBotApiModelConversation1(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Reaction) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson121d77adEncodeGithubComDeadlineTeamDtalksBotApiModelConversation(w, v)
+	easyjson121d77adEncodeGithubComDeadlineTeamDtalksBotApiModelConversation1(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Reaction) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson121d77adDecodeGithubComDeadlineTeamDtalksBotApiModelConversation(&r, v)
+	easyjson121d77adDecodeGithubComDeadlineTeamDtalksBotApiModelConversation1(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Reaction) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson121d77adDecodeGithubComDeadlineTeamDtalksBotApiModelConversation(l, v)
+	easyjson121d77adDecodeGithubComDeadlineTeamDtalksBotApiModelConversation1(l, v)
 }

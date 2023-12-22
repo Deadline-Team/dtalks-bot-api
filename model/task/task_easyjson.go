@@ -20,7 +20,126 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjson79a0a577DecodeGithubComDeadlineTeamDtalksBotApiModelTask(in *jlexer.Lexer, out *Task) {
+func easyjson79a0a577DecodeGithubComDeadlineTeamDtalksBotApiModelTask(in *jlexer.Lexer, out *TaskFilter) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "IDs":
+			if in.IsNull() {
+				in.Skip()
+				out.IDs = nil
+			} else {
+				in.Delim('[')
+				if out.IDs == nil {
+					if !in.IsDelim(']') {
+						out.IDs = make([]string, 0, 4)
+					} else {
+						out.IDs = []string{}
+					}
+				} else {
+					out.IDs = (out.IDs)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v1 string
+					v1 = string(in.String())
+					out.IDs = append(out.IDs, v1)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "ConversationId":
+			out.ConversationId = string(in.String())
+		case "Resolved":
+			out.Resolved = bool(in.Bool())
+		case "Search":
+			out.Search = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson79a0a577EncodeGithubComDeadlineTeamDtalksBotApiModelTask(out *jwriter.Writer, in TaskFilter) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"IDs\":"
+		out.RawString(prefix[1:])
+		if in.IDs == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v2, v3 := range in.IDs {
+				if v2 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v3))
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"ConversationId\":"
+		out.RawString(prefix)
+		out.String(string(in.ConversationId))
+	}
+	{
+		const prefix string = ",\"Resolved\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.Resolved))
+	}
+	{
+		const prefix string = ",\"Search\":"
+		out.RawString(prefix)
+		out.String(string(in.Search))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v TaskFilter) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson79a0a577EncodeGithubComDeadlineTeamDtalksBotApiModelTask(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v TaskFilter) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson79a0a577EncodeGithubComDeadlineTeamDtalksBotApiModelTask(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *TaskFilter) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson79a0a577DecodeGithubComDeadlineTeamDtalksBotApiModelTask(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *TaskFilter) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson79a0a577DecodeGithubComDeadlineTeamDtalksBotApiModelTask(l, v)
+}
+func easyjson79a0a577DecodeGithubComDeadlineTeamDtalksBotApiModelTask1(in *jlexer.Lexer, out *Task) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -133,7 +252,7 @@ func easyjson79a0a577DecodeGithubComDeadlineTeamDtalksBotApiModelTask(in *jlexer
 		in.Consumed()
 	}
 }
-func easyjson79a0a577EncodeGithubComDeadlineTeamDtalksBotApiModelTask(out *jwriter.Writer, in Task) {
+func easyjson79a0a577EncodeGithubComDeadlineTeamDtalksBotApiModelTask1(out *jwriter.Writer, in Task) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -249,23 +368,23 @@ func easyjson79a0a577EncodeGithubComDeadlineTeamDtalksBotApiModelTask(out *jwrit
 // MarshalJSON supports json.Marshaler interface
 func (v Task) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson79a0a577EncodeGithubComDeadlineTeamDtalksBotApiModelTask(&w, v)
+	easyjson79a0a577EncodeGithubComDeadlineTeamDtalksBotApiModelTask1(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Task) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson79a0a577EncodeGithubComDeadlineTeamDtalksBotApiModelTask(w, v)
+	easyjson79a0a577EncodeGithubComDeadlineTeamDtalksBotApiModelTask1(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Task) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson79a0a577DecodeGithubComDeadlineTeamDtalksBotApiModelTask(&r, v)
+	easyjson79a0a577DecodeGithubComDeadlineTeamDtalksBotApiModelTask1(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Task) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson79a0a577DecodeGithubComDeadlineTeamDtalksBotApiModelTask(l, v)
+	easyjson79a0a577DecodeGithubComDeadlineTeamDtalksBotApiModelTask1(l, v)
 }

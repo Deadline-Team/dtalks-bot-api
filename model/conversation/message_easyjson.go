@@ -66,7 +66,7 @@ func easyjson4086215fDecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 				if out.Author == nil {
 					out.Author = new(user.User)
 				}
-				easyjson4086215fDecodeGithubComDeadlineTeamDtalksBotApiModelUser(in, out.Author)
+				(*out.Author).UnmarshalEasyJSON(in)
 			}
 		case "reply":
 			if in.IsNull() {
@@ -187,7 +187,7 @@ func easyjson4086215fDecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 						if v3 == nil {
 							v3 = new(user.User)
 						}
-						easyjson4086215fDecodeGithubComDeadlineTeamDtalksBotApiModelUser(in, v3)
+						(*v3).UnmarshalEasyJSON(in)
 					}
 					out.UnreadUsers = append(out.UnreadUsers, v3)
 					in.WantComma()
@@ -249,7 +249,7 @@ func easyjson4086215fDecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 						if v5 == nil {
 							v5 = new(MessageReaction)
 						}
-						easyjson4086215fDecodeGithubComDeadlineTeamDtalksBotApiModelConversation1(in, v5)
+						(*v5).UnmarshalEasyJSON(in)
 					}
 					out.MessageReactions = append(out.MessageReactions, v5)
 					in.WantComma()
@@ -346,7 +346,7 @@ func easyjson4086215fDecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 				}
 				for !in.IsDelim(']') {
 					var v8 MessageButton
-					easyjson4086215fDecodeGithubComDeadlineTeamDtalksBotApiModelConversation2(in, &v8)
+					(v8).UnmarshalEasyJSON(in)
 					out.Buttons = append(out.Buttons, v8)
 					in.WantComma()
 				}
@@ -424,7 +424,7 @@ func easyjson4086215fEncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 		} else {
 			out.RawString(prefix)
 		}
-		easyjson4086215fEncodeGithubComDeadlineTeamDtalksBotApiModelUser(out, *in.Author)
+		(*in.Author).MarshalEasyJSON(out)
 	}
 	if in.Reply != nil {
 		const prefix string = ",\"reply\":"
@@ -556,7 +556,7 @@ func easyjson4086215fEncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 				if v13 == nil {
 					out.RawString("null")
 				} else {
-					easyjson4086215fEncodeGithubComDeadlineTeamDtalksBotApiModelUser(out, *v13)
+					(*v13).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte(']')
@@ -602,7 +602,7 @@ func easyjson4086215fEncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 				if v17 == nil {
 					out.RawString("null")
 				} else {
-					easyjson4086215fEncodeGithubComDeadlineTeamDtalksBotApiModelConversation1(out, *v17)
+					(*v17).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte(']')
@@ -705,7 +705,7 @@ func easyjson4086215fEncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 				if v21 > 0 {
 					out.RawByte(',')
 				}
-				easyjson4086215fEncodeGithubComDeadlineTeamDtalksBotApiModelConversation2(out, v22)
+				(v22).MarshalEasyJSON(out)
 			}
 			out.RawByte(']')
 		}
@@ -755,574 +755,4 @@ func (v *Message) UnmarshalJSON(data []byte) error {
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Message) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson4086215fDecodeGithubComDeadlineTeamDtalksBotApiModelConversation(l, v)
-}
-func easyjson4086215fDecodeGithubComDeadlineTeamDtalksBotApiModelConversation2(in *jlexer.Lexer, out *MessageButton) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeFieldName(false)
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "label":
-			out.Label = string(in.String())
-		case "data":
-			out.Data = string(in.String())
-		case "url":
-			out.Url = string(in.String())
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjson4086215fEncodeGithubComDeadlineTeamDtalksBotApiModelConversation2(out *jwriter.Writer, in MessageButton) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	if in.Label != "" {
-		const prefix string = ",\"label\":"
-		first = false
-		out.RawString(prefix[1:])
-		out.String(string(in.Label))
-	}
-	if in.Data != "" {
-		const prefix string = ",\"data\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Data))
-	}
-	if in.Url != "" {
-		const prefix string = ",\"url\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Url))
-	}
-	out.RawByte('}')
-}
-func easyjson4086215fDecodeGithubComDeadlineTeamDtalksBotApiModelConversation1(in *jlexer.Lexer, out *MessageReaction) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeFieldName(false)
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "id":
-			out.ID = string(in.String())
-		case "reaction":
-			if in.IsNull() {
-				in.Skip()
-				out.Reaction = nil
-			} else {
-				if out.Reaction == nil {
-					out.Reaction = new(Reaction)
-				}
-				easyjson4086215fDecodeGithubComDeadlineTeamDtalksBotApiModelConversation3(in, out.Reaction)
-			}
-		case "count":
-			out.Count = int(in.Int())
-		case "users":
-			if in.IsNull() {
-				in.Skip()
-				out.Users = nil
-			} else {
-				in.Delim('[')
-				if out.Users == nil {
-					if !in.IsDelim(']') {
-						out.Users = make([]*user.User, 0, 8)
-					} else {
-						out.Users = []*user.User{}
-					}
-				} else {
-					out.Users = (out.Users)[:0]
-				}
-				for !in.IsDelim(']') {
-					var v23 *user.User
-					if in.IsNull() {
-						in.Skip()
-						v23 = nil
-					} else {
-						if v23 == nil {
-							v23 = new(user.User)
-						}
-						easyjson4086215fDecodeGithubComDeadlineTeamDtalksBotApiModelUser(in, v23)
-					}
-					out.Users = append(out.Users, v23)
-					in.WantComma()
-				}
-				in.Delim(']')
-			}
-		case "reactedByMe":
-			out.ReactedByMe = bool(in.Bool())
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjson4086215fEncodeGithubComDeadlineTeamDtalksBotApiModelConversation1(out *jwriter.Writer, in MessageReaction) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	if in.ID != "" {
-		const prefix string = ",\"id\":"
-		first = false
-		out.RawString(prefix[1:])
-		out.String(string(in.ID))
-	}
-	if in.Reaction != nil {
-		const prefix string = ",\"reaction\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		easyjson4086215fEncodeGithubComDeadlineTeamDtalksBotApiModelConversation3(out, *in.Reaction)
-	}
-	if in.Count != 0 {
-		const prefix string = ",\"count\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Int(int(in.Count))
-	}
-	if len(in.Users) != 0 {
-		const prefix string = ",\"users\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		{
-			out.RawByte('[')
-			for v24, v25 := range in.Users {
-				if v24 > 0 {
-					out.RawByte(',')
-				}
-				if v25 == nil {
-					out.RawString("null")
-				} else {
-					easyjson4086215fEncodeGithubComDeadlineTeamDtalksBotApiModelUser(out, *v25)
-				}
-			}
-			out.RawByte(']')
-		}
-	}
-	if in.ReactedByMe {
-		const prefix string = ",\"reactedByMe\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Bool(bool(in.ReactedByMe))
-	}
-	out.RawByte('}')
-}
-func easyjson4086215fDecodeGithubComDeadlineTeamDtalksBotApiModelConversation3(in *jlexer.Lexer, out *Reaction) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeFieldName(false)
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "id":
-			out.ID = string(in.String())
-		case "value":
-			out.Value = string(in.String())
-		case "invisible":
-			out.Invisible = bool(in.Bool())
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjson4086215fEncodeGithubComDeadlineTeamDtalksBotApiModelConversation3(out *jwriter.Writer, in Reaction) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	if in.ID != "" {
-		const prefix string = ",\"id\":"
-		first = false
-		out.RawString(prefix[1:])
-		out.String(string(in.ID))
-	}
-	if in.Value != "" {
-		const prefix string = ",\"value\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Value))
-	}
-	if in.Invisible {
-		const prefix string = ",\"invisible\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Bool(bool(in.Invisible))
-	}
-	out.RawByte('}')
-}
-func easyjson4086215fDecodeGithubComDeadlineTeamDtalksBotApiModelUser(in *jlexer.Lexer, out *user.User) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeFieldName(false)
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "id":
-			out.ID = string(in.String())
-		case "source":
-			out.Source = string(in.String())
-		case "username":
-			out.Username = string(in.String())
-		case "firstName":
-			out.FirstName = string(in.String())
-		case "lastName":
-			out.LastName = string(in.String())
-		case "email":
-			out.Email = string(in.String())
-		case "position":
-			out.Position = string(in.String())
-		case "avatar":
-			if in.IsNull() {
-				in.Skip()
-				out.Avatar = nil
-			} else {
-				if out.Avatar == nil {
-					out.Avatar = new(model.Avatar)
-				}
-				(*out.Avatar).UnmarshalEasyJSON(in)
-			}
-		case "birthday":
-			if in.IsNull() {
-				in.Skip()
-				out.Birthday = nil
-			} else {
-				if out.Birthday == nil {
-					out.Birthday = new(time.Time)
-				}
-				if data := in.Raw(); in.Ok() {
-					in.AddError((*out.Birthday).UnmarshalJSON(data))
-				}
-			}
-		case "phoneNumber":
-			out.PhoneNumber = int64(in.Int64())
-		case "city":
-			out.City = string(in.String())
-		case "company":
-			out.Company = string(in.String())
-		case "department":
-			out.Department = string(in.String())
-		case "chief":
-			if in.IsNull() {
-				in.Skip()
-				out.Chief = nil
-			} else {
-				if out.Chief == nil {
-					out.Chief = new(user.User)
-				}
-				easyjson4086215fDecodeGithubComDeadlineTeamDtalksBotApiModelUser(in, out.Chief)
-			}
-		case "lastActivity":
-			if in.IsNull() {
-				in.Skip()
-				out.LastActivity = nil
-			} else {
-				if out.LastActivity == nil {
-					out.LastActivity = new(time.Time)
-				}
-				if data := in.Raw(); in.Ok() {
-					in.AddError((*out.LastActivity).UnmarshalJSON(data))
-				}
-			}
-		case "blocked":
-			out.Blocked = bool(in.Bool())
-		case "timeZone":
-			out.TimeZone = int64(in.Int64())
-		case "canChangePassword":
-			out.CanChangePassword = bool(in.Bool())
-		case "canChangeAvatar":
-			out.CanChangeAvatar = bool(in.Bool())
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjson4086215fEncodeGithubComDeadlineTeamDtalksBotApiModelUser(out *jwriter.Writer, in user.User) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	if in.ID != "" {
-		const prefix string = ",\"id\":"
-		first = false
-		out.RawString(prefix[1:])
-		out.String(string(in.ID))
-	}
-	if in.Source != "" {
-		const prefix string = ",\"source\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Source))
-	}
-	if in.Username != "" {
-		const prefix string = ",\"username\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Username))
-	}
-	if in.FirstName != "" {
-		const prefix string = ",\"firstName\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.FirstName))
-	}
-	if in.LastName != "" {
-		const prefix string = ",\"lastName\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.LastName))
-	}
-	if in.Email != "" {
-		const prefix string = ",\"email\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Email))
-	}
-	if in.Position != "" {
-		const prefix string = ",\"position\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Position))
-	}
-	if in.Avatar != nil {
-		const prefix string = ",\"avatar\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		(*in.Avatar).MarshalEasyJSON(out)
-	}
-	if in.Birthday != nil {
-		const prefix string = ",\"birthday\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Raw((*in.Birthday).MarshalJSON())
-	}
-	if in.PhoneNumber != 0 {
-		const prefix string = ",\"phoneNumber\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Int64(int64(in.PhoneNumber))
-	}
-	if in.City != "" {
-		const prefix string = ",\"city\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.City))
-	}
-	if in.Company != "" {
-		const prefix string = ",\"company\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Company))
-	}
-	if in.Department != "" {
-		const prefix string = ",\"department\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Department))
-	}
-	if in.Chief != nil {
-		const prefix string = ",\"chief\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		easyjson4086215fEncodeGithubComDeadlineTeamDtalksBotApiModelUser(out, *in.Chief)
-	}
-	if in.LastActivity != nil {
-		const prefix string = ",\"lastActivity\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Raw((*in.LastActivity).MarshalJSON())
-	}
-	if in.Blocked {
-		const prefix string = ",\"blocked\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Bool(bool(in.Blocked))
-	}
-	if in.TimeZone != 0 {
-		const prefix string = ",\"timeZone\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Int64(int64(in.TimeZone))
-	}
-	if in.CanChangePassword {
-		const prefix string = ",\"canChangePassword\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Bool(bool(in.CanChangePassword))
-	}
-	if in.CanChangeAvatar {
-		const prefix string = ",\"canChangeAvatar\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Bool(bool(in.CanChangeAvatar))
-	}
-	out.RawByte('}')
 }

@@ -30,7 +30,9 @@ import (
 	"fmt"
 	"github.com/deadline-team/dtalks-bot-api/model"
 	attachmentModel "github.com/deadline-team/dtalks-bot-api/model/attachment"
+	calendarEventModel "github.com/deadline-team/dtalks-bot-api/model/calendar_event"
 	conversationModel "github.com/deadline-team/dtalks-bot-api/model/conversation"
+	taskModel "github.com/deadline-team/dtalks-bot-api/model/task"
 	"github.com/deadline-team/dtalks-bot-api/util"
 	"io"
 	"log"
@@ -54,27 +56,28 @@ type BotAPI interface {
 
 	/*---------------------- Users ----------------------*/
 
-	//TODO GetUserById(ctx context.Context, id string, fields string) authorizationModel.User
-	//TODO GetUserAvatarById(ctx context.Context, id string, dimension string) []byte
+	//TODO GetUserById(ctx context.Context, userId string, fields string) authorizationModel.User
+	//TODO GetUserAvatarById(ctx context.Context, userId string, dimension string) []byte
 	//TODO GetUserAll(ctx context.Context, page model.Pageable, fields string) model.Page[authorizationModel.User]
 	//TODO GetUserAllAdmins(ctx context.Context) []authorizationModel.User
 	//TODO FindUserByUsername(ctx context.Context, username string, fields string) authorizationModel.User
 	//TODO FindUserByEmail(ctx context.Context, email string, fields string) authorizationModel.User
 
-	//TODO BlockUserById(ctx context.Context, id string)
-	//TODO UnblockUserById(ctx context.Context, id string)
-	//TODO RefreshUserTokenById(ctx context.Context, id string)
-	//TODO DropUserCacheById(ctx context.Context, id string)
-	//TODO LogoutUserById(ctx context.Context, id string)
+	//TODO BlockUserById(ctx context.Context, userId string)
+	//TODO UnblockUserById(ctx context.Context, userId string)
+	//TODO RefreshUserTokenById(ctx context.Context, userId string)
+	//TODO DropUserCacheById(ctx context.Context, userId string)
+	//TODO LogoutUserById(ctx context.Context, userId string)
 
 	/*---------------------- Conversations ----------------------*/
+
+	//TODO GetConversationById(ctx context.Context, conversationId string, fields string) conversationModel.Conversation
+	//TODO GetConversationAvatarById(ctx context.Context, conversationId string, dimension string) []byte
 
 	// GetConversationAll
 	// Метод для получения всех открытых диалогов с ботом
 	GetConversationAll(ctx context.Context) ([]conversationModel.Conversation, error)
 
-	//TODO GetConversationById(ctx context.Context, id string, fields string) conversationModel.Conversation
-	//TODO GetConversationAvatarById(ctx context.Context, id string, dimension string) []byte
 	//TODO CreateConversation(ctx context.Context, dType conversationModel.ConversationDType, conversation conversationModel.Conversation) conversationModel.Conversation
 	//TODO UpdateConversation(ctx context.Context, conversation conversationModel.Conversation) conversationModel.Conversation
 	//TODO DeleteConversationById(ctx context.Context, conversationId string)
@@ -87,7 +90,7 @@ type BotAPI interface {
 	// Метод для создания и отправки сообщения в диалог
 	CreateMessage(ctx context.Context, conversationId string, message conversationModel.Message) (*conversationModel.Message, error)
 
-	//TODO GetMessageById(ctx context.Context, id string, fields string) conversationModel.Message
+	//TODO GetMessageById(ctx context.Context, messageId string, fields string) conversationModel.Message
 	//TODO GetMessageAll(ctx context.Context, conversationId string) model.Page[conversationModel.Message]
 	//TODO UpdateMessage(ctx context.Context, conversationId string, messageId string, text string) conversationModel.Message
 	//TODO DeleteMessageById(ctx context.Context, conversationId string, messageId string)
@@ -109,38 +112,95 @@ type BotAPI interface {
 
 	/*---------------------- Labels ----------------------*/
 
-	//TODO GetLabelById(ctx context.Context, id string, fields string) conversationModel.Label
-	//TODO GetLabelAll(ctx context.Context, page model.Pageable, fields string) model.Page[conversationModel.Label]
-	//TODO CreateLabel(ctx context.Context, label conversationModel.Label) conversationModel.Label
-	//TODO UpdateLabel(ctx context.Context, label conversationModel.Label) conversationModel.Label
-	//TODO DeleteLabelById(ctx context.Context, id string)
-	//TODO FindLabelByName(ctx context.Context, name string) conversationModel.Label
+	// GetLabelById
+	// Метод для получения меток по ID
+	GetLabelById(ctx context.Context, labelId string, fields string) (*conversationModel.Label, error)
+
+	// GetLabelAll
+	// Метод для получения всех меток с фильтрацией
+	GetLabelAll(ctx context.Context, page model.Pageable, filter conversationModel.LabelFilter, fields string) (*model.Page[conversationModel.Label], error)
+
+	// CreateLabel
+	// Метод для создания меток
+	CreateLabel(ctx context.Context, label conversationModel.Label) (*conversationModel.Label, error)
+
+	// UpdateLabel
+	// Метод для обновления меток
+	UpdateLabel(ctx context.Context, label conversationModel.Label) (*conversationModel.Label, error)
+
+	// DeleteLabelById
+	// Метод для удаления меток по ID
+	DeleteLabelById(ctx context.Context, labelId string) error
 
 	/*---------------------- Reactions ----------------------*/
 
-	//TODO GetById(ctx context.Context, id string, fields string) conversationModel.Reaction
-	//TODO GetAll(ctx context.Context, page model.Pageable, fields string) model.Page[conversationModel.Reaction]
-	//TODO Create(ctx context.Context, reaction conversationModel.Reaction) conversationModel.Reaction
-	//TODO Update(ctx context.Context, reaction conversationModel.Reaction) conversationModel.Reaction
-	//TODO DeleteById(ctx context.Context, id string)
-	//TODO FindByValue(ctx context.Context, value string) conversationModel.Reaction
+	// GetReactionById
+	// Метод для получения реакций по ID
+	GetReactionById(ctx context.Context, reactionId string, fields string) (*conversationModel.Reaction, error)
+
+	// GetReactionAll
+	// Метод для получения всех реакций с фильтрацией
+	GetReactionAll(ctx context.Context, page model.Pageable, filter conversationModel.ReactionFilter, fields string) (*model.Page[conversationModel.Reaction], error)
+
+	// CreateReaction
+	// Метод для создания реакций
+	CreateReaction(ctx context.Context, reaction conversationModel.Reaction) (*conversationModel.Reaction, error)
+
+	// UpdateReaction
+	// Метод для обновления реакций
+	UpdateReaction(ctx context.Context, reaction conversationModel.Reaction) (*conversationModel.Reaction, error)
+
+	// DeleteReactionById
+	// Метод для удаления реакций по ID
+	DeleteReactionById(ctx context.Context, reactionId string) error
 
 	/*---------------------- Meetings ----------------------*/
 
-	//TODO GetMeetingById(ctx context.Context, id string, fields string) calendarEventModel.CalendarEvent
-	//TODO GetMeetingAll(ctx context.Context, fields string) []calendarEventModel.CalendarEvent
-	//TODO CreateMeeting(ctx context.Context, calendarEvent calendarEventModel.CalendarEvent) calendarEventModel.CalendarEvent
-	//TODO UpdateMeeting(ctx context.Context, calendarEvent calendarEventModel.CalendarEvent) calendarEventModel.CalendarEvent
-	//TODO DeleteMeetingById(ctx context.Context, id string)
+	// GetCalendarEventById
+	// Метод для получения событий календаря по ID
+	GetCalendarEventById(ctx context.Context, meetingId string, fields string) (*calendarEventModel.CalendarEvent, error)
+
+	// GetCalendarEventAll
+	// Метод для получения всех событий календаря с фильтрацией
+	GetCalendarEventAll(ctx context.Context, filter calendarEventModel.CalendarEventFilter, fields string) ([]calendarEventModel.CalendarEvent, error)
+
+	// CreateCalendarEvent
+	// Метод для создания событий календаря
+	CreateCalendarEvent(ctx context.Context, calendarEvent calendarEventModel.CalendarEvent) (*calendarEventModel.CalendarEvent, error)
+
+	// UpdateCalendarEvent
+	// Метод для обновления событий календаря
+	UpdateCalendarEvent(ctx context.Context, calendarEvent calendarEventModel.CalendarEvent) (*calendarEventModel.CalendarEvent, error)
+
+	// DeleteCalendarEventById
+	// Метод для удаления событий календаря по ID
+	DeleteCalendarEventById(ctx context.Context, meetingId string) error
 
 	/*---------------------- Tasks ----------------------*/
 
-	//TODO GetTaskById(ctx context.Context, id string, fields string) taskModel.Task
-	//TODO GetTaskAll(ctx context.Context, filter taskModel.TaskFilter, fields string) []taskModel.Task
-	//TODO CreateTask(ctx context.Context, task taskModel.Task) taskModel.Task
-	//TODO UpdateTask(ctx context.Context, task taskModel.Task) taskModel.Task
-	//TODO DeleteTaskById(ctx context.Context, id string)
-	//TODO ResolveTaskById(ctx context.Context, id string)
+	// GetTaskById
+	// Метод для получения задач по ID
+	GetTaskById(ctx context.Context, taskId string, fields string) (*taskModel.Task, error)
+
+	// GetTaskAll
+	// Метод для получения всех задач с фильтрацией
+	GetTaskAll(ctx context.Context, filter taskModel.TaskFilter, fields string) ([]taskModel.Task, error)
+
+	// CreateTask
+	// Метод для создания задач
+	CreateTask(ctx context.Context, task taskModel.Task) (*taskModel.Task, error)
+
+	// UpdateTask
+	// Метод для обновления задач
+	UpdateTask(ctx context.Context, task taskModel.Task) (*taskModel.Task, error)
+
+	// DeleteTaskById
+	// Метод для удаления задач по ID
+	DeleteTaskById(ctx context.Context, taskId string) error
+
+	// ResolveTaskById
+	// Метод для маркировки задач как исполненной
+	ResolveTaskById(ctx context.Context, taskId string) error
 }
 
 var httpClient = &http.Client{Timeout: time.Second * 30}

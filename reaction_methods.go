@@ -23,3 +23,164 @@ package dtalks_bot_api
  *
  * © "DEADLINE TEAM" LLC, All rights reserved.
  */
+
+import (
+	"bytes"
+	"context"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"github.com/deadline-team/dtalks-bot-api/model"
+	conversationModel "github.com/deadline-team/dtalks-bot-api/model/conversation"
+	"net/http"
+)
+
+const reactionBasePath = "/api/conversation/reactions"
+
+func (client *botAPI) GetReactionById(ctx context.Context, reactionId string, fields string) (*conversationModel.Reaction, error) {
+	request, err := client.createRequest(ctx, http.MethodGet, fmt.Sprintf("%s/%s", reactionBasePath, reactionId), nil)
+	if err != nil {
+		return nil, err
+	}
+	appendReactionQueryParams(request, model.Pageable{}, conversationModel.ReactionFilter{}, fields)
+
+	response, err := httpClient.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	if response.StatusCode != 200 {
+		return nil, errors.New(response.Status)
+	}
+
+	var reaction *conversationModel.Reaction
+	if err := json.NewDecoder(response.Body).Decode(reaction); err != nil {
+		return nil, err
+	}
+	if err = response.Body.Close(); err != nil {
+		return nil, err
+	}
+	return reaction, nil
+}
+
+func (client *botAPI) GetReactionAll(ctx context.Context, page model.Pageable, filter conversationModel.ReactionFilter, fields string) (*model.Page[conversationModel.Reaction], error) {
+	request, err := client.createRequest(ctx, http.MethodGet, reactionBasePath, nil)
+	if err != nil {
+		return nil, err
+	}
+	appendReactionQueryParams(request, page, filter, fields)
+
+	response, err := httpClient.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	if response.StatusCode != 200 {
+		return nil, errors.New(response.Status)
+	}
+
+	var reactions model.Page[conversationModel.Reaction]
+	if err := json.NewDecoder(response.Body).Decode(&reactions); err != nil {
+		return nil, err
+	}
+	if err = response.Body.Close(); err != nil {
+		return nil, err
+	}
+	return &reactions, nil
+}
+
+func (client *botAPI) CreateReaction(ctx context.Context, reaction conversationModel.Reaction) (*conversationModel.Reaction, error) {
+	data, err := json.Marshal(&reaction)
+	if err != nil {
+		return nil, err
+	}
+
+	request, err := client.createRequest(ctx, http.MethodPost, reactionBasePath, bytes.NewReader(data))
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := httpClient.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	if response.StatusCode != 201 {
+		return nil, errors.New(response.Status)
+	}
+	if err := json.NewDecoder(response.Body).Decode(&reaction); err != nil {
+		return nil, err
+	}
+	if err = response.Body.Close(); err != nil {
+		return nil, err
+	}
+
+	return &reaction, err
+}
+
+func (client *botAPI) UpdateReaction(ctx context.Context, reaction conversationModel.Reaction) (*conversationModel.Reaction, error) {
+	data, err := json.Marshal(&reaction)
+	if err != nil {
+		return nil, err
+	}
+
+	request, err := client.createRequest(ctx, http.MethodPut, reactionBasePath, bytes.NewReader(data))
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := httpClient.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	if response.StatusCode != 200 {
+		return nil, errors.New(response.Status)
+	}
+	if err := json.NewDecoder(response.Body).Decode(&reaction); err != nil {
+		return nil, err
+	}
+	if err = response.Body.Close(); err != nil {
+		return nil, err
+	}
+
+	return &reaction, err
+}
+
+func (client *botAPI) DeleteReactionById(ctx context.Context, reactionId string) error {
+	request, err := client.createRequest(ctx, http.MethodDelete, fmt.Sprintf("%s/%s", reactionBasePath, reactionId), nil)
+	if err != nil {
+		return err
+	}
+
+	response, err := httpClient.Do(request)
+	if err != nil {
+		return err
+	}
+	if response.StatusCode != 200 {
+		return errors.New(response.Status)
+	}
+	if err = response.Body.Close(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func appendReactionQueryParams(request *http.Request, page model.Pageable, filter conversationModel.ReactionFilter, fields string) {
+	if page.Page != 0 {
+		request.Form.Set("page", fmt.Sprintf("%d", page.Page))
+	}
+	if page.Size != 0 {
+		request.Form.Set("size", fmt.Sprintf("%d", page.Size))
+	}
+	if page.Sort != nil {
+		request.Form.Set("sort", fmt.Sprintf("%s,%s", page.Sort.Field, page.Sort.Order))
+	}
+	if filter.IDs != nil && len(filter.IDs) > 0 {
+		for _, id := range filter.IDs {
+			request.Form.Add("ids", id)
+		}
+	}
+	if filter.Value != "" {
+		request.Form.Set("value", filter.Value)
+	}
+	if fields != "" {
+		request.Form.Set("fields", fields)
+	}
+}

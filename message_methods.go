@@ -40,7 +40,7 @@ func (client *botAPI) CreateMessage(ctx context.Context, conversationId string, 
 		return nil, err
 	}
 
-	request, err := client.createRequest(ctx, http.MethodPost, fmt.Sprintf("/api/conversation/conversations/%s/messages", conversationId), bytes.NewReader(data))
+	request, err := client.createRequest(ctx, http.MethodPost, fmt.Sprintf("%s/%s/messages", conversationBasePath, conversationId), bytes.NewReader(data))
 	if err != nil {
 		return nil, err
 	}

@@ -43,3 +43,10 @@ type Task struct {
 	Resolved     bool                            `json:"resolved,omitempty"`
 	ResolvedDate *time.Time                      `json:"resolvedDate,omitempty"`
 }
+
+type TaskFilter struct {
+	IDs            []string `form:"ids"`
+	ConversationId string   `form:"conversationId"`
+	Resolved       bool     `form:"resolved"`
+	Search         string   `form:"search"`
+}

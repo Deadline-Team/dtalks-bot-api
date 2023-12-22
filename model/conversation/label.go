@@ -30,3 +30,8 @@ type Label struct {
 	Color     int    `json:"color,omitempty"`
 	Invisible bool   `json:"invisible,omitempty"`
 }
+
+type LabelFilter struct {
+	IDs  []string `form:"ids"`
+	Name string   `form:"name"`
+}

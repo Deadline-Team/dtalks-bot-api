@@ -33,8 +33,10 @@ import (
 	"net/http"
 )
 
+const conversationBasePath = "/api/conversation/conversations"
+
 func (client *botAPI) GetConversationAll(ctx context.Context) ([]conversationModel.Conversation, error) {
-	request, err := client.createRequest(ctx, http.MethodGet, "/api/conversation/conversations", nil)
+	request, err := client.createRequest(ctx, http.MethodGet, conversationBasePath, nil)
 	if err != nil {
 		return nil, err
 	}
