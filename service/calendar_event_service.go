@@ -87,6 +87,7 @@ func (service *calendarEventService) GetCalendarEventById(ctx context.Context, c
 	appendCalendarEventQueryParams(request, calendarEventModel.CalendarEventFilter{}, fields)
 
 	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -96,9 +97,6 @@ func (service *calendarEventService) GetCalendarEventById(ctx context.Context, c
 
 	var calendarEvent *calendarEventModel.CalendarEvent
 	if err := json.NewDecoder(response.Body).Decode(calendarEvent); err != nil {
-		return nil, err
-	}
-	if err = response.Body.Close(); err != nil {
 		return nil, err
 	}
 	return calendarEvent, nil
@@ -112,6 +110,7 @@ func (service *calendarEventService) GetCalendarEventAll(ctx context.Context, fi
 	appendCalendarEventQueryParams(request, filter, fields)
 
 	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -121,9 +120,6 @@ func (service *calendarEventService) GetCalendarEventAll(ctx context.Context, fi
 
 	var calendarEvents []calendarEventModel.CalendarEvent
 	if err := json.NewDecoder(response.Body).Decode(&calendarEvents); err != nil {
-		return nil, err
-	}
-	if err = response.Body.Close(); err != nil {
 		return nil, err
 	}
 	return calendarEvents, nil
@@ -141,6 +137,7 @@ func (service *calendarEventService) CreateCalendarEvent(ctx context.Context, ca
 	}
 
 	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -148,9 +145,6 @@ func (service *calendarEventService) CreateCalendarEvent(ctx context.Context, ca
 		return nil, errors.New(response.Status)
 	}
 	if err := json.NewDecoder(response.Body).Decode(&calendarEvent); err != nil {
-		return nil, err
-	}
-	if err = response.Body.Close(); err != nil {
 		return nil, err
 	}
 
@@ -169,6 +163,7 @@ func (service *calendarEventService) UpdateCalendarEvent(ctx context.Context, ca
 	}
 
 	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -176,9 +171,6 @@ func (service *calendarEventService) UpdateCalendarEvent(ctx context.Context, ca
 		return nil, errors.New(response.Status)
 	}
 	if err := json.NewDecoder(response.Body).Decode(&calendarEvent); err != nil {
-		return nil, err
-	}
-	if err = response.Body.Close(); err != nil {
 		return nil, err
 	}
 
@@ -192,14 +184,12 @@ func (service *calendarEventService) DeleteCalendarEventById(ctx context.Context
 	}
 
 	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
 	if err != nil {
 		return err
 	}
 	if response.StatusCode != 200 {
 		return errors.New(response.Status)
-	}
-	if err = response.Body.Close(); err != nil {
-		return err
 	}
 	return nil
 }

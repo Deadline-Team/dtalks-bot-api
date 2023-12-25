@@ -20,7 +20,126 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in *jlexer.Lexer, out *Conversation) {
+func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in *jlexer.Lexer, out *ConversationFilter) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "IDs":
+			if in.IsNull() {
+				in.Skip()
+				out.IDs = nil
+			} else {
+				in.Delim('[')
+				if out.IDs == nil {
+					if !in.IsDelim(']') {
+						out.IDs = make([]string, 0, 4)
+					} else {
+						out.IDs = []string{}
+					}
+				} else {
+					out.IDs = (out.IDs)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v1 string
+					v1 = string(in.String())
+					out.IDs = append(out.IDs, v1)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "Name":
+			out.Name = string(in.String())
+		case "Visibility":
+			out.Visibility = Visibility(in.String())
+		case "Search":
+			out.Search = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation(out *jwriter.Writer, in ConversationFilter) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"IDs\":"
+		out.RawString(prefix[1:])
+		if in.IDs == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v2, v3 := range in.IDs {
+				if v2 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v3))
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"Name\":"
+		out.RawString(prefix)
+		out.String(string(in.Name))
+	}
+	{
+		const prefix string = ",\"Visibility\":"
+		out.RawString(prefix)
+		out.String(string(in.Visibility))
+	}
+	{
+		const prefix string = ",\"Search\":"
+		out.RawString(prefix)
+		out.String(string(in.Search))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v ConversationFilter) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v ConversationFilter) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *ConversationFilter) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *ConversationFilter) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation(l, v)
+}
+func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation1(in *jlexer.Lexer, out *Conversation) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -57,9 +176,9 @@ func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 					out.Type = (out.Type)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v1 ConversationDType
-					v1 = ConversationDType(in.String())
-					out.Type = append(out.Type, v1)
+					var v4 ConversationDType
+					v4 = ConversationDType(in.String())
+					out.Type = append(out.Type, v4)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -116,17 +235,17 @@ func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 					out.Admins = (out.Admins)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v2 *user.User
+					var v5 *user.User
 					if in.IsNull() {
 						in.Skip()
-						v2 = nil
+						v5 = nil
 					} else {
-						if v2 == nil {
-							v2 = new(user.User)
+						if v5 == nil {
+							v5 = new(user.User)
 						}
-						(*v2).UnmarshalEasyJSON(in)
+						(*v5).UnmarshalEasyJSON(in)
 					}
-					out.Admins = append(out.Admins, v2)
+					out.Admins = append(out.Admins, v5)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -147,17 +266,17 @@ func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 					out.Members = (out.Members)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v3 *user.User
+					var v6 *user.User
 					if in.IsNull() {
 						in.Skip()
-						v3 = nil
+						v6 = nil
 					} else {
-						if v3 == nil {
-							v3 = new(user.User)
+						if v6 == nil {
+							v6 = new(user.User)
 						}
-						(*v3).UnmarshalEasyJSON(in)
+						(*v6).UnmarshalEasyJSON(in)
 					}
-					out.Members = append(out.Members, v3)
+					out.Members = append(out.Members, v6)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -178,17 +297,17 @@ func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 					out.MutedMembers = (out.MutedMembers)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v4 *user.User
+					var v7 *user.User
 					if in.IsNull() {
 						in.Skip()
-						v4 = nil
+						v7 = nil
 					} else {
-						if v4 == nil {
-							v4 = new(user.User)
+						if v7 == nil {
+							v7 = new(user.User)
 						}
-						(*v4).UnmarshalEasyJSON(in)
+						(*v7).UnmarshalEasyJSON(in)
 					}
-					out.MutedMembers = append(out.MutedMembers, v4)
+					out.MutedMembers = append(out.MutedMembers, v7)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -209,17 +328,17 @@ func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 					out.Messages = (out.Messages)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v5 *Message
+					var v8 *Message
 					if in.IsNull() {
 						in.Skip()
-						v5 = nil
+						v8 = nil
 					} else {
-						if v5 == nil {
-							v5 = new(Message)
+						if v8 == nil {
+							v8 = new(Message)
 						}
-						(*v5).UnmarshalEasyJSON(in)
+						(*v8).UnmarshalEasyJSON(in)
 					}
-					out.Messages = append(out.Messages, v5)
+					out.Messages = append(out.Messages, v8)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -240,17 +359,17 @@ func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 					out.Pinned = (out.Pinned)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v6 *Message
+					var v9 *Message
 					if in.IsNull() {
 						in.Skip()
-						v6 = nil
+						v9 = nil
 					} else {
-						if v6 == nil {
-							v6 = new(Message)
+						if v9 == nil {
+							v9 = new(Message)
 						}
-						(*v6).UnmarshalEasyJSON(in)
+						(*v9).UnmarshalEasyJSON(in)
 					}
-					out.Pinned = append(out.Pinned, v6)
+					out.Pinned = append(out.Pinned, v9)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -275,17 +394,17 @@ func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 					out.UnreadThread = (out.UnreadThread)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v7 *Message
+					var v10 *Message
 					if in.IsNull() {
 						in.Skip()
-						v7 = nil
+						v10 = nil
 					} else {
-						if v7 == nil {
-							v7 = new(Message)
+						if v10 == nil {
+							v10 = new(Message)
 						}
-						(*v7).UnmarshalEasyJSON(in)
+						(*v10).UnmarshalEasyJSON(in)
 					}
-					out.UnreadThread = append(out.UnreadThread, v7)
+					out.UnreadThread = append(out.UnreadThread, v10)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -300,7 +419,7 @@ func easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 		in.Consumed()
 	}
 }
-func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation(out *jwriter.Writer, in Conversation) {
+func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation1(out *jwriter.Writer, in Conversation) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -320,11 +439,11 @@ func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 		}
 		{
 			out.RawByte('[')
-			for v8, v9 := range in.Type {
-				if v8 > 0 {
+			for v11, v12 := range in.Type {
+				if v11 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v9))
+				out.String(string(v12))
 			}
 			out.RawByte(']')
 		}
@@ -389,14 +508,14 @@ func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 		}
 		{
 			out.RawByte('[')
-			for v10, v11 := range in.Admins {
-				if v10 > 0 {
+			for v13, v14 := range in.Admins {
+				if v13 > 0 {
 					out.RawByte(',')
 				}
-				if v11 == nil {
+				if v14 == nil {
 					out.RawString("null")
 				} else {
-					(*v11).MarshalEasyJSON(out)
+					(*v14).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte(']')
@@ -412,14 +531,14 @@ func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 		}
 		{
 			out.RawByte('[')
-			for v12, v13 := range in.Members {
-				if v12 > 0 {
+			for v15, v16 := range in.Members {
+				if v15 > 0 {
 					out.RawByte(',')
 				}
-				if v13 == nil {
+				if v16 == nil {
 					out.RawString("null")
 				} else {
-					(*v13).MarshalEasyJSON(out)
+					(*v16).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte(']')
@@ -435,14 +554,14 @@ func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 		}
 		{
 			out.RawByte('[')
-			for v14, v15 := range in.MutedMembers {
-				if v14 > 0 {
+			for v17, v18 := range in.MutedMembers {
+				if v17 > 0 {
 					out.RawByte(',')
 				}
-				if v15 == nil {
+				if v18 == nil {
 					out.RawString("null")
 				} else {
-					(*v15).MarshalEasyJSON(out)
+					(*v18).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte(']')
@@ -458,14 +577,14 @@ func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 		}
 		{
 			out.RawByte('[')
-			for v16, v17 := range in.Messages {
-				if v16 > 0 {
+			for v19, v20 := range in.Messages {
+				if v19 > 0 {
 					out.RawByte(',')
 				}
-				if v17 == nil {
+				if v20 == nil {
 					out.RawString("null")
 				} else {
-					(*v17).MarshalEasyJSON(out)
+					(*v20).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte(']')
@@ -481,14 +600,14 @@ func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 		}
 		{
 			out.RawByte('[')
-			for v18, v19 := range in.Pinned {
-				if v18 > 0 {
+			for v21, v22 := range in.Pinned {
+				if v21 > 0 {
 					out.RawByte(',')
 				}
-				if v19 == nil {
+				if v22 == nil {
 					out.RawString("null")
 				} else {
-					(*v19).MarshalEasyJSON(out)
+					(*v22).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte(']')
@@ -524,14 +643,14 @@ func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 		}
 		{
 			out.RawByte('[')
-			for v20, v21 := range in.UnreadThread {
-				if v20 > 0 {
+			for v23, v24 := range in.UnreadThread {
+				if v23 > 0 {
 					out.RawByte(',')
 				}
-				if v21 == nil {
+				if v24 == nil {
 					out.RawString("null")
 				} else {
-					(*v21).MarshalEasyJSON(out)
+					(*v24).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte(']')
@@ -543,23 +662,23 @@ func easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 // MarshalJSON supports json.Marshaler interface
 func (v Conversation) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation(&w, v)
+	easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation1(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Conversation) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation(w, v)
+	easyjsonA5648bb1EncodeGithubComDeadlineTeamDtalksBotApiModelConversation1(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Conversation) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation(&r, v)
+	easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation1(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Conversation) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation(l, v)
+	easyjsonA5648bb1DecodeGithubComDeadlineTeamDtalksBotApiModelConversation1(l, v)
 }

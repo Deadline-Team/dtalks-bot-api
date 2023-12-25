@@ -87,6 +87,7 @@ func (service *labelService) GetLabelById(ctx context.Context, labelId string, f
 	appendLabelQueryParams(request, model.Pageable{}, conversationModel.LabelFilter{}, fields)
 
 	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -96,9 +97,6 @@ func (service *labelService) GetLabelById(ctx context.Context, labelId string, f
 
 	var label *conversationModel.Label
 	if err := json.NewDecoder(response.Body).Decode(label); err != nil {
-		return nil, err
-	}
-	if err = response.Body.Close(); err != nil {
 		return nil, err
 	}
 	return label, nil
@@ -112,6 +110,7 @@ func (service *labelService) GetLabelAll(ctx context.Context, page model.Pageabl
 	appendLabelQueryParams(request, page, filter, fields)
 
 	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -121,9 +120,6 @@ func (service *labelService) GetLabelAll(ctx context.Context, page model.Pageabl
 
 	var labels model.Page[conversationModel.Label]
 	if err := json.NewDecoder(response.Body).Decode(&labels); err != nil {
-		return nil, err
-	}
-	if err = response.Body.Close(); err != nil {
 		return nil, err
 	}
 	return &labels, nil
@@ -141,6 +137,7 @@ func (service *labelService) CreateLabel(ctx context.Context, label conversation
 	}
 
 	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -148,9 +145,6 @@ func (service *labelService) CreateLabel(ctx context.Context, label conversation
 		return nil, errors.New(response.Status)
 	}
 	if err := json.NewDecoder(response.Body).Decode(&label); err != nil {
-		return nil, err
-	}
-	if err = response.Body.Close(); err != nil {
 		return nil, err
 	}
 
@@ -169,6 +163,7 @@ func (service *labelService) UpdateLabel(ctx context.Context, label conversation
 	}
 
 	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -176,9 +171,6 @@ func (service *labelService) UpdateLabel(ctx context.Context, label conversation
 		return nil, errors.New(response.Status)
 	}
 	if err := json.NewDecoder(response.Body).Decode(&label); err != nil {
-		return nil, err
-	}
-	if err = response.Body.Close(); err != nil {
 		return nil, err
 	}
 
@@ -192,14 +184,12 @@ func (service *labelService) DeleteLabelById(ctx context.Context, labelId string
 	}
 
 	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
 	if err != nil {
 		return err
 	}
 	if response.StatusCode != 200 {
 		return errors.New(response.Status)
-	}
-	if err = response.Body.Close(); err != nil {
-		return err
 	}
 	return nil
 }

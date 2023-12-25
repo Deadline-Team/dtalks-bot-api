@@ -19,7 +19,140 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjson9e1087fdDecodeGithubComDeadlineTeamDtalksBotApiModelUser(in *jlexer.Lexer, out *User) {
+func easyjson9e1087fdDecodeGithubComDeadlineTeamDtalksBotApiModelUser(in *jlexer.Lexer, out *UserFilter) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "IDs":
+			if in.IsNull() {
+				in.Skip()
+				out.IDs = nil
+			} else {
+				in.Delim('[')
+				if out.IDs == nil {
+					if !in.IsDelim(']') {
+						out.IDs = make([]string, 0, 4)
+					} else {
+						out.IDs = []string{}
+					}
+				} else {
+					out.IDs = (out.IDs)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v1 string
+					v1 = string(in.String())
+					out.IDs = append(out.IDs, v1)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "Username":
+			out.Username = string(in.String())
+		case "FirstName":
+			out.FirstName = string(in.String())
+		case "LastName":
+			out.LastName = string(in.String())
+		case "Email":
+			out.Email = string(in.String())
+		case "Search":
+			out.Search = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson9e1087fdEncodeGithubComDeadlineTeamDtalksBotApiModelUser(out *jwriter.Writer, in UserFilter) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"IDs\":"
+		out.RawString(prefix[1:])
+		if in.IDs == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v2, v3 := range in.IDs {
+				if v2 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v3))
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"Username\":"
+		out.RawString(prefix)
+		out.String(string(in.Username))
+	}
+	{
+		const prefix string = ",\"FirstName\":"
+		out.RawString(prefix)
+		out.String(string(in.FirstName))
+	}
+	{
+		const prefix string = ",\"LastName\":"
+		out.RawString(prefix)
+		out.String(string(in.LastName))
+	}
+	{
+		const prefix string = ",\"Email\":"
+		out.RawString(prefix)
+		out.String(string(in.Email))
+	}
+	{
+		const prefix string = ",\"Search\":"
+		out.RawString(prefix)
+		out.String(string(in.Search))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v UserFilter) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson9e1087fdEncodeGithubComDeadlineTeamDtalksBotApiModelUser(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v UserFilter) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson9e1087fdEncodeGithubComDeadlineTeamDtalksBotApiModelUser(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *UserFilter) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson9e1087fdDecodeGithubComDeadlineTeamDtalksBotApiModelUser(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *UserFilter) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson9e1087fdDecodeGithubComDeadlineTeamDtalksBotApiModelUser(l, v)
+}
+func easyjson9e1087fdDecodeGithubComDeadlineTeamDtalksBotApiModelUser1(in *jlexer.Lexer, out *User) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -122,7 +255,7 @@ func easyjson9e1087fdDecodeGithubComDeadlineTeamDtalksBotApiModelUser(in *jlexer
 		in.Consumed()
 	}
 }
-func easyjson9e1087fdEncodeGithubComDeadlineTeamDtalksBotApiModelUser(out *jwriter.Writer, in User) {
+func easyjson9e1087fdEncodeGithubComDeadlineTeamDtalksBotApiModelUser1(out *jwriter.Writer, in User) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -318,23 +451,23 @@ func easyjson9e1087fdEncodeGithubComDeadlineTeamDtalksBotApiModelUser(out *jwrit
 // MarshalJSON supports json.Marshaler interface
 func (v User) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson9e1087fdEncodeGithubComDeadlineTeamDtalksBotApiModelUser(&w, v)
+	easyjson9e1087fdEncodeGithubComDeadlineTeamDtalksBotApiModelUser1(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v User) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson9e1087fdEncodeGithubComDeadlineTeamDtalksBotApiModelUser(w, v)
+	easyjson9e1087fdEncodeGithubComDeadlineTeamDtalksBotApiModelUser1(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *User) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson9e1087fdDecodeGithubComDeadlineTeamDtalksBotApiModelUser(&r, v)
+	easyjson9e1087fdDecodeGithubComDeadlineTeamDtalksBotApiModelUser1(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *User) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson9e1087fdDecodeGithubComDeadlineTeamDtalksBotApiModelUser(l, v)
+	easyjson9e1087fdDecodeGithubComDeadlineTeamDtalksBotApiModelUser1(l, v)
 }

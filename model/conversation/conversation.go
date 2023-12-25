@@ -63,3 +63,10 @@ type Conversation struct {
 	MessageCount int                 `json:"messageCount,omitempty"`
 	UnreadThread []*Message          `json:"unreadThread,omitempty"`
 }
+
+type ConversationFilter struct {
+	IDs        []string   `form:"ids"`
+	Name       string     `form:"name"`
+	Visibility Visibility `form:"visibility"`
+	Search     string     `form:"search"`
+}

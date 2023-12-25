@@ -29,9 +29,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/deadline-team/dtalks-bot-api/model"
 	attachmentModel "github.com/deadline-team/dtalks-bot-api/model/attachment"
 	"github.com/deadline-team/dtalks-bot-api/util"
+	"io"
 	"mime/multipart"
 	"net/http"
 	"time"
@@ -42,11 +44,17 @@ const attachmentBasePath = "/api/attachment/attachments"
 var attachmentSrv AttachmentService
 
 type AttachmentService interface {
+	// GetAttachmentById
+	// Метод для получения вложений по ID
+	GetAttachmentById(ctx context.Context, attachmentId string) ([]byte, error)
+
+	// GetAttachmentMetaById
+	// Метод для получения меты вложений по ID
+	GetAttachmentMetaById(ctx context.Context, attachmentId string) (*attachmentModel.Attachment, error)
+
 	// CreateAttachment
-	// Метод для создания вложения на сервере
+	// Метод для создания вложений на сервере
 	CreateAttachment(ctx context.Context, fileName string, data []byte) (*attachmentModel.Attachment, error)
-	//TODO GetAttachmentById(ctx context.Context, attachmentId string) ([]byte, error)
-	//TODO GetAttachmentMetaById(ctx context.Context, attachmentId string) (*attachmentModel.Attachment, error)
 }
 
 type attachmentService struct {
@@ -63,6 +71,47 @@ func NewAttachmentService(botBaseParam model.BotBaseParam) AttachmentService {
 		httpClient:   &http.Client{Timeout: time.Second * 30},
 	}
 	return attachmentSrv
+}
+
+func (service *attachmentService) GetAttachmentById(ctx context.Context, attachmentId string) ([]byte, error) {
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodGet, fmt.Sprintf("%s/%s", attachmentBasePath, attachmentId), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
+	if err != nil {
+		return nil, err
+	}
+	if response.StatusCode != 200 {
+		return nil, errors.New(response.Status)
+	}
+
+	return io.ReadAll(response.Body)
+}
+
+func (service *attachmentService) GetAttachmentMetaById(ctx context.Context, attachmentId string) (*attachmentModel.Attachment, error) {
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodGet, fmt.Sprintf("%s/%s/meta", attachmentBasePath, attachmentId), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
+	if err != nil {
+		return nil, err
+	}
+	if response.StatusCode != 200 {
+		return nil, errors.New(response.Status)
+	}
+
+	var attachment attachmentModel.Attachment
+	if err := json.NewDecoder(response.Body).Decode(&attachment); err != nil {
+		return nil, err
+	}
+
+	return &attachment, err
 }
 
 func (service *attachmentService) CreateAttachment(ctx context.Context, fileName string, data []byte) (*attachmentModel.Attachment, error) {
@@ -87,6 +136,7 @@ func (service *attachmentService) CreateAttachment(ctx context.Context, fileName
 	request.Header.Set("Content-Type", bw.FormDataContentType())
 
 	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -96,9 +146,6 @@ func (service *attachmentService) CreateAttachment(ctx context.Context, fileName
 
 	var attachment attachmentModel.Attachment
 	if err := json.NewDecoder(response.Body).Decode(&attachment); err != nil {
-		return nil, err
-	}
-	if err = response.Body.Close(); err != nil {
 		return nil, err
 	}
 

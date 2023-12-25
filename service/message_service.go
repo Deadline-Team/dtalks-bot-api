@@ -93,6 +93,7 @@ func (service *messageService) CreateMessage(ctx context.Context, conversationId
 	}
 
 	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -100,9 +101,6 @@ func (service *messageService) CreateMessage(ctx context.Context, conversationId
 		return nil, errors.New(response.Status)
 	}
 	if err := json.NewDecoder(response.Body).Decode(&message); err != nil {
-		return nil, err
-	}
-	if err = response.Body.Close(); err != nil {
 		return nil, err
 	}
 

@@ -91,6 +91,7 @@ func (service *taskService) GetTaskById(ctx context.Context, taskId string, fiel
 	appendTaskQueryParams(request, taskModel.TaskFilter{}, fields)
 
 	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -100,9 +101,6 @@ func (service *taskService) GetTaskById(ctx context.Context, taskId string, fiel
 
 	var task *taskModel.Task
 	if err := json.NewDecoder(response.Body).Decode(task); err != nil {
-		return nil, err
-	}
-	if err = response.Body.Close(); err != nil {
 		return nil, err
 	}
 	return task, nil
@@ -116,6 +114,7 @@ func (service *taskService) GetTaskAll(ctx context.Context, filter taskModel.Tas
 	appendTaskQueryParams(request, filter, fields)
 
 	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -125,9 +124,6 @@ func (service *taskService) GetTaskAll(ctx context.Context, filter taskModel.Tas
 
 	var tasks []taskModel.Task
 	if err := json.NewDecoder(response.Body).Decode(&tasks); err != nil {
-		return nil, err
-	}
-	if err = response.Body.Close(); err != nil {
 		return nil, err
 	}
 	return tasks, nil
@@ -145,20 +141,18 @@ func (service *taskService) CreateTask(ctx context.Context, task taskModel.Task)
 	}
 
 	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
 	if err != nil {
 		return nil, err
 	}
 	if response.StatusCode != 201 {
 		return nil, errors.New(response.Status)
 	}
+
 	if err := json.NewDecoder(response.Body).Decode(&task); err != nil {
 		return nil, err
 	}
-	if err = response.Body.Close(); err != nil {
-		return nil, err
-	}
-
-	return &task, err
+	return &task, nil
 }
 
 func (service *taskService) UpdateTask(ctx context.Context, task taskModel.Task) (*taskModel.Task, error) {
@@ -173,6 +167,7 @@ func (service *taskService) UpdateTask(ctx context.Context, task taskModel.Task)
 	}
 
 	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -180,9 +175,6 @@ func (service *taskService) UpdateTask(ctx context.Context, task taskModel.Task)
 		return nil, errors.New(response.Status)
 	}
 	if err := json.NewDecoder(response.Body).Decode(&task); err != nil {
-		return nil, err
-	}
-	if err = response.Body.Close(); err != nil {
 		return nil, err
 	}
 
@@ -196,14 +188,12 @@ func (service *taskService) DeleteTaskById(ctx context.Context, taskId string) e
 	}
 
 	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
 	if err != nil {
 		return err
 	}
 	if response.StatusCode != 200 {
 		return errors.New(response.Status)
-	}
-	if err = response.Body.Close(); err != nil {
-		return err
 	}
 	return nil
 }
@@ -215,14 +205,12 @@ func (service *taskService) ResolveTaskById(ctx context.Context, taskId string) 
 	}
 
 	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
 	if err != nil {
 		return err
 	}
 	if response.StatusCode != 200 {
 		return errors.New(response.Status)
-	}
-	if err = response.Body.Close(); err != nil {
-		return err
 	}
 	return nil
 }

@@ -87,6 +87,7 @@ func (service *reactionService) GetReactionById(ctx context.Context, reactionId 
 	appendReactionQueryParams(request, model.Pageable{}, conversationModel.ReactionFilter{}, fields)
 
 	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -96,9 +97,6 @@ func (service *reactionService) GetReactionById(ctx context.Context, reactionId 
 
 	var reaction *conversationModel.Reaction
 	if err := json.NewDecoder(response.Body).Decode(reaction); err != nil {
-		return nil, err
-	}
-	if err = response.Body.Close(); err != nil {
 		return nil, err
 	}
 	return reaction, nil
@@ -112,6 +110,7 @@ func (service *reactionService) GetReactionAll(ctx context.Context, page model.P
 	appendReactionQueryParams(request, page, filter, fields)
 
 	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -121,9 +120,6 @@ func (service *reactionService) GetReactionAll(ctx context.Context, page model.P
 
 	var reactions model.Page[conversationModel.Reaction]
 	if err := json.NewDecoder(response.Body).Decode(&reactions); err != nil {
-		return nil, err
-	}
-	if err = response.Body.Close(); err != nil {
 		return nil, err
 	}
 	return &reactions, nil
@@ -141,6 +137,7 @@ func (service *reactionService) CreateReaction(ctx context.Context, reaction con
 	}
 
 	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -148,9 +145,6 @@ func (service *reactionService) CreateReaction(ctx context.Context, reaction con
 		return nil, errors.New(response.Status)
 	}
 	if err := json.NewDecoder(response.Body).Decode(&reaction); err != nil {
-		return nil, err
-	}
-	if err = response.Body.Close(); err != nil {
 		return nil, err
 	}
 
@@ -169,6 +163,7 @@ func (service *reactionService) UpdateReaction(ctx context.Context, reaction con
 	}
 
 	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -176,9 +171,6 @@ func (service *reactionService) UpdateReaction(ctx context.Context, reaction con
 		return nil, errors.New(response.Status)
 	}
 	if err := json.NewDecoder(response.Body).Decode(&reaction); err != nil {
-		return nil, err
-	}
-	if err = response.Body.Close(); err != nil {
 		return nil, err
 	}
 
@@ -192,14 +184,12 @@ func (service *reactionService) DeleteReactionById(ctx context.Context, reaction
 	}
 
 	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
 	if err != nil {
 		return err
 	}
 	if response.StatusCode != 200 {
 		return errors.New(response.Status)
-	}
-	if err = response.Body.Close(); err != nil {
-		return err
 	}
 	return nil
 }

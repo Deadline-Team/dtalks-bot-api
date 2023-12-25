@@ -50,3 +50,12 @@ type User struct {
 	CanChangePassword bool          `json:"canChangePassword,omitempty"`
 	CanChangeAvatar   bool          `json:"canChangeAvatar,omitempty"`
 }
+
+type UserFilter struct {
+	IDs       []string `form:"ids"`
+	Username  string   `form:"username"`
+	FirstName string   `form:"firstName"`
+	LastName  string   `form:"lastName"`
+	Email     string   `form:"email"`
+	Search    string   `form:"search"`
+}
