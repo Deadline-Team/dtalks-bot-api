@@ -25,8 +25,10 @@ package dtalks_bot_api
  */
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/deadline-team/dtalks-bot-api/model"
 	conversationModel "github.com/deadline-team/dtalks-bot-api/model/conversation"
@@ -52,6 +54,10 @@ type BotAPI interface {
 	// GetEventChannel
 	// Метод для получения канала в который складываются все события с сервера
 	GetEventChannel() chan model.Event
+
+	// RegisterCommand
+	// Метод для регистрации команд бота
+	RegisterCommand(ctx context.Context, commandsAndDescriptions map[string]string) error
 }
 
 type botAPI struct {
@@ -66,9 +72,10 @@ type botAPI struct {
 	service.TaskService
 	service.UserService
 
-	tokenInfo model.TokenInfo
-	channel   chan model.Event
-	wsClient  *util.WebsocketClient
+	tokenInfo  model.TokenInfo
+	channel    chan model.Event
+	wsClient   *util.WebsocketClient
+	httpClient *http.Client
 }
 
 func New(host string, apiKey string, secure bool) (BotAPI, error) {
@@ -95,6 +102,7 @@ func New(host string, apiKey string, secure bool) (BotAPI, error) {
 		UserService:          service.NewUserService(botBaseParam),
 		tokenInfo:            tokenInfo,
 		channel:              make(chan model.Event),
+		httpClient:           &http.Client{Timeout: time.Second * 30},
 	}, nil
 }
 
@@ -119,6 +127,28 @@ func (client *botAPI) GetEventChannel() chan model.Event {
 	go client.wsClient.Start()
 
 	return client.channel
+}
+
+func (client *botAPI) RegisterCommand(ctx context.Context, commandsAndDescriptions map[string]string) error {
+	data, err := json.Marshal(&commandsAndDescriptions)
+	if err != nil {
+		return err
+	}
+
+	request, err := util.CreateHttpRequest(ctx, client.BotBaseParam, http.MethodPut, fmt.Sprintf("/api/bot/applications/user/%s/command", client.tokenInfo.UserId), bytes.NewReader(data))
+	if err != nil {
+		return err
+	}
+
+	response, err := client.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
+	if err != nil {
+		return err
+	}
+	if response.StatusCode != 200 {
+		return errors.New(response.Status)
+	}
+	return nil
 }
 
 func (client *botAPI) onConnect() {
