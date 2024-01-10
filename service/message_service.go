@@ -64,6 +64,10 @@ type MessageService interface {
 	// Метод для удаления закрепления сообщения из диалога по ID
 	UnpinMessage(ctx context.Context, conversationId string, messageId string) error
 
+	// ReadMessage
+	// Метод для установки статуса "прочитано" над сообщением из диалога по ID
+	ReadMessage(ctx context.Context, conversationId string, messageId string) error
+
 	// AddLabelToMessage
 	// Метод для добавления метки к сообщениям в диалоге по ID
 	AddLabelToMessage(ctx context.Context, conversationId string, messageId string, labelId string) error
@@ -95,6 +99,10 @@ type MessageService interface {
 	// AddLabelToThreadMessage
 	// Метод для добавления метки к сообщениям в потоке по ID
 	AddLabelToThreadMessage(ctx context.Context, conversationId string, parentMessageId string, messageId string, labelId string) error
+
+	// ReadThreadMessage
+	// Метод для установки статуса "прочитано" над сообщением в потоке по ID
+	ReadThreadMessage(ctx context.Context, conversationId string, parentMessageId string, messageId string) error
 
 	// RemoveLabelFromThreadMessage
 	// Метод для удаления метки к сообщениям в потоке по ID
@@ -247,6 +255,23 @@ func (service *messageService) UnpinMessage(ctx context.Context, conversationId 
 	return nil
 }
 
+func (service *messageService) ReadMessage(ctx context.Context, conversationId string, messageId string) error {
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodPut, fmt.Sprintf("%s/%s/messages/%s/read", conversationBasePath, conversationId, messageId), nil)
+	if err != nil {
+		return err
+	}
+
+	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
+	if err != nil {
+		return err
+	}
+	if response.StatusCode != 200 {
+		return errors.New(response.Status)
+	}
+	return nil
+}
+
 func (service *messageService) AddLabelToMessage(ctx context.Context, conversationId string, messageId string, labelId string) error {
 	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodPut, fmt.Sprintf("%s/%s/messages/%s/label/%s", conversationBasePath, conversationId, messageId, labelId), nil)
 	if err != nil {
@@ -375,6 +400,23 @@ func (service *messageService) UpdateThreadMessage(ctx context.Context, conversa
 
 func (service *messageService) DeleteThreadMessageById(ctx context.Context, conversationId string, parentMessageId string, messageId string) error {
 	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodDelete, fmt.Sprintf("%s/%s/messages/%s/thread/%s", conversationBasePath, conversationId, parentMessageId, messageId), nil)
+	if err != nil {
+		return err
+	}
+
+	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
+	if err != nil {
+		return err
+	}
+	if response.StatusCode != 200 {
+		return errors.New(response.Status)
+	}
+	return nil
+}
+
+func (service *messageService) ReadThreadMessage(ctx context.Context, conversationId string, parentMessageId string, messageId string) error {
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodPut, fmt.Sprintf("%s/%s/messages/%s/thread/%s/read", conversationBasePath, conversationId, parentMessageId, messageId), nil)
 	if err != nil {
 		return err
 	}
