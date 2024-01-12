@@ -31,7 +31,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/deadline-team/dtalks-bot-api/model"
-	conversationModel "github.com/deadline-team/dtalks-bot-api/model/conversation"
 	"github.com/deadline-team/dtalks-bot-api/service"
 	"github.com/deadline-team/dtalks-bot-api/util"
 	"io"
@@ -161,52 +160,34 @@ func (client *botAPI) onMessage(msg []byte) {
 		fmt.Println(err)
 	}
 
-	if event.Type == "NEW_MESSAGE_IN_CONVERSATION" {
-		var message conversationModel.Message
-		data, err := json.Marshal(event.Payload)
+	if strings.HasPrefix(event.Type, "NEW_MESSAGE") {
+		message, err := util.ParseMessage(event)
 		if err != nil {
 			fmt.Println(err)
 		}
-		if err := json.Unmarshal(data, &message); err != nil {
-			fmt.Println(err)
-		}
 
-		if err := client.ReadMessage(context.Background(), message.Meta["conversationId"].(string), message.ID); err != nil {
-			fmt.Println(err)
+		event.ConversationId = message.Meta["conversationId"].(string)
+		if event.Type == "NEW_MESSAGE_IN_CONVERSATION" {
+			if err := client.ReadMessage(context.Background(), event.ConversationId, message.ID); err != nil {
+				fmt.Println(err)
+			}
+		} else {
+			event.ParentMessageId = message.Meta["threadId"].(string)
+			if err := client.ReadThreadMessage(context.Background(), event.ConversationId, event.ParentMessageId, message.ID); err != nil {
+				fmt.Println(err)
+			}
 		}
 
 		if strings.HasPrefix(message.Text, "/") {
 			event.UserId = ""
 			event.Type = "Command"
 			event.Payload, _ = strings.CutPrefix(message.Text, "/")
-			client.channel <- event
 		} else {
 			event.UserId = ""
 			event.Type = "Message"
-			client.channel <- event
-		}
-	} else if event.Type == "NEW_MESSAGE_IN_THREAD" {
-		var message conversationModel.Message
-		data, err := json.Marshal(event.Payload)
-		if err != nil {
-			fmt.Println(err)
-		}
-		if err := json.Unmarshal(data, &message); err != nil {
-			fmt.Println(err)
 		}
 
-		if err := client.ReadThreadMessage(context.Background(), message.Meta["conversationId"].(string), message.Meta["threadId"].(string), message.ID); err != nil {
-			fmt.Println(err)
-		}
-
-		if strings.HasPrefix(message.Text, "/") {
-			event.UserId = ""
-			event.Type = "ThreadCommand"
-			event.Payload, _ = strings.CutPrefix(message.Text, "/")
-			client.channel <- event
-		} else {
-			event.UserId = ""
-			event.Type = "ThreadMessage"
+		if client.tokenInfo.UserId != message.Author.ID {
 			client.channel <- event
 		}
 	} else {

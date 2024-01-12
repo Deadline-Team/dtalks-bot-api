@@ -1,4 +1,4 @@
-package model
+package util
 
 /*
  * Copyright © 2023, "DEADLINE TEAM" LLC
@@ -24,10 +24,20 @@ package model
  * © "DEADLINE TEAM" LLC, All rights reserved.
  */
 
-type Event struct {
-	UserId          string      `json:"userId,omitempty"`
-	Type            string      `json:"type,omitempty"`
-	Payload         interface{} `json:"payload,omitempty"`
-	ConversationId  string      `json:"conversationId,omitempty"`
-	ParentMessageId string      `json:"parentMessageId,omitempty"`
+import (
+	"encoding/json"
+	"github.com/deadline-team/dtalks-bot-api/model"
+	conversationModel "github.com/deadline-team/dtalks-bot-api/model/conversation"
+)
+
+func ParseMessage(event model.Event) (conversationModel.Message, error) {
+	var message conversationModel.Message
+	data, err := json.Marshal(event.Payload)
+	if err != nil {
+		return message, err
+	}
+	if err := json.Unmarshal(data, &message); err != nil {
+		return message, err
+	}
+	return message, nil
 }
