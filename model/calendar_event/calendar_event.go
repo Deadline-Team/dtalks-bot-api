@@ -1,7 +1,7 @@
 package calendar_event
 
 /*
- * Copyright © 2023, "DEADLINE TEAM" LLC
+ * Copyright © 2023 - 2024, "DEADLINE TEAM" LLC
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are not permitted.
