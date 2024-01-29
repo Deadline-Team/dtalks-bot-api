@@ -12,6 +12,7 @@ generate:
 	cd model/calendar_event && $(GOPATH)/bin/easyjson -all calendar_event.go
 	cd model/conversation && $(GOPATH)/bin/easyjson -all conversation.go
 	cd model/conversation && $(GOPATH)/bin/easyjson -all label.go
+	cd model/conversation && $(GOPATH)/bin/easyjson -all link.go
 	cd model/conversation && $(GOPATH)/bin/easyjson -all message.go
 	cd model/conversation && $(GOPATH)/bin/easyjson -all message_button.go
 	cd model/conversation && $(GOPATH)/bin/easyjson -all message_reaction.go

@@ -66,6 +66,7 @@ type botAPI struct {
 	service.CalendarEventService
 	service.ConversationService
 	service.LabelService
+	service.LinkService
 	service.MessageService
 	service.ReactionService
 	service.TaskService
@@ -95,6 +96,7 @@ func New(host string, apiKey string, secure bool) (BotAPI, error) {
 		CalendarEventService: service.NewCalendarEventService(botBaseParam),
 		ConversationService:  service.NewConversationService(botBaseParam),
 		LabelService:         service.NewLabelService(botBaseParam),
+		LinkService:          service.NewLinkService(botBaseParam),
 		MessageService:       service.NewMessageService(botBaseParam),
 		ReactionService:      service.NewReactionService(botBaseParam),
 		TaskService:          service.NewTaskService(botBaseParam),

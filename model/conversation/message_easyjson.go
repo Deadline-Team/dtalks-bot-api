@@ -287,6 +287,37 @@ func easyjson4086215fDecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 				}
 				in.Delim(']')
 			}
+		case "links":
+			if in.IsNull() {
+				in.Skip()
+				out.Links = nil
+			} else {
+				in.Delim('[')
+				if out.Links == nil {
+					if !in.IsDelim(']') {
+						out.Links = make([]*Link, 0, 8)
+					} else {
+						out.Links = []*Link{}
+					}
+				} else {
+					out.Links = (out.Links)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v7 *Link
+					if in.IsNull() {
+						in.Skip()
+						v7 = nil
+					} else {
+						if v7 == nil {
+							v7 = new(Link)
+						}
+						(*v7).UnmarshalEasyJSON(in)
+					}
+					out.Links = append(out.Links, v7)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
 		case "read":
 			out.Read = bool(in.Bool())
 		case "readDate":
@@ -316,15 +347,15 @@ func easyjson4086215fDecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
-					var v7 interface{}
-					if m, ok := v7.(easyjson.Unmarshaler); ok {
+					var v8 interface{}
+					if m, ok := v8.(easyjson.Unmarshaler); ok {
 						m.UnmarshalEasyJSON(in)
-					} else if m, ok := v7.(json.Unmarshaler); ok {
+					} else if m, ok := v8.(json.Unmarshaler); ok {
 						_ = m.UnmarshalJSON(in.Raw())
 					} else {
-						v7 = in.Interface()
+						v8 = in.Interface()
 					}
-					(out.History)[key] = v7
+					(out.History)[key] = v8
 					in.WantComma()
 				}
 				in.Delim('}')
@@ -345,9 +376,9 @@ func easyjson4086215fDecodeGithubComDeadlineTeamDtalksBotApiModelConversation(in
 					out.Buttons = (out.Buttons)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v8 MessageButton
-					(v8).UnmarshalEasyJSON(in)
-					out.Buttons = append(out.Buttons, v8)
+					var v9 MessageButton
+					(v9).UnmarshalEasyJSON(in)
+					out.Buttons = append(out.Buttons, v9)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -456,14 +487,14 @@ func easyjson4086215fEncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 		}
 		{
 			out.RawByte('[')
-			for v9, v10 := range in.Thread {
-				if v9 > 0 {
+			for v10, v11 := range in.Thread {
+				if v10 > 0 {
 					out.RawByte(',')
 				}
-				if v10 == nil {
+				if v11 == nil {
 					out.RawString("null")
 				} else {
-					(*v10).MarshalEasyJSON(out)
+					(*v11).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte(']')
@@ -499,21 +530,21 @@ func easyjson4086215fEncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 		}
 		{
 			out.RawByte('{')
-			v11First := true
-			for v11Name, v11Value := range in.Meta {
-				if v11First {
-					v11First = false
+			v12First := true
+			for v12Name, v12Value := range in.Meta {
+				if v12First {
+					v12First = false
 				} else {
 					out.RawByte(',')
 				}
-				out.String(string(v11Name))
+				out.String(string(v12Name))
 				out.RawByte(':')
-				if m, ok := v11Value.(easyjson.Marshaler); ok {
+				if m, ok := v12Value.(easyjson.Marshaler); ok {
 					m.MarshalEasyJSON(out)
-				} else if m, ok := v11Value.(json.Marshaler); ok {
+				} else if m, ok := v12Value.(json.Marshaler); ok {
 					out.Raw(m.MarshalJSON())
 				} else {
-					out.Raw(json.Marshal(v11Value))
+					out.Raw(json.Marshal(v12Value))
 				}
 			}
 			out.RawByte('}')
@@ -549,14 +580,14 @@ func easyjson4086215fEncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 		}
 		{
 			out.RawByte('[')
-			for v12, v13 := range in.UnreadUsers {
-				if v12 > 0 {
+			for v13, v14 := range in.UnreadUsers {
+				if v13 > 0 {
 					out.RawByte(',')
 				}
-				if v13 == nil {
+				if v14 == nil {
 					out.RawString("null")
 				} else {
-					(*v13).MarshalEasyJSON(out)
+					(*v14).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte(']')
@@ -572,14 +603,14 @@ func easyjson4086215fEncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 		}
 		{
 			out.RawByte('[')
-			for v14, v15 := range in.Labels {
-				if v14 > 0 {
+			for v15, v16 := range in.Labels {
+				if v15 > 0 {
 					out.RawByte(',')
 				}
-				if v15 == nil {
+				if v16 == nil {
 					out.RawString("null")
 				} else {
-					(*v15).MarshalEasyJSON(out)
+					(*v16).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte(']')
@@ -595,14 +626,14 @@ func easyjson4086215fEncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 		}
 		{
 			out.RawByte('[')
-			for v16, v17 := range in.MessageReactions {
-				if v16 > 0 {
+			for v17, v18 := range in.MessageReactions {
+				if v17 > 0 {
 					out.RawByte(',')
 				}
-				if v17 == nil {
+				if v18 == nil {
 					out.RawString("null")
 				} else {
-					(*v17).MarshalEasyJSON(out)
+					(*v18).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte(']')
@@ -618,14 +649,37 @@ func easyjson4086215fEncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 		}
 		{
 			out.RawByte('[')
-			for v18, v19 := range in.Attachments {
-				if v18 > 0 {
+			for v19, v20 := range in.Attachments {
+				if v19 > 0 {
 					out.RawByte(',')
 				}
-				if v19 == nil {
+				if v20 == nil {
 					out.RawString("null")
 				} else {
-					(*v19).MarshalEasyJSON(out)
+					(*v20).MarshalEasyJSON(out)
+				}
+			}
+			out.RawByte(']')
+		}
+	}
+	if len(in.Links) != 0 {
+		const prefix string = ",\"links\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		{
+			out.RawByte('[')
+			for v21, v22 := range in.Links {
+				if v21 > 0 {
+					out.RawByte(',')
+				}
+				if v22 == nil {
+					out.RawString("null")
+				} else {
+					(*v22).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte(']')
@@ -671,21 +725,21 @@ func easyjson4086215fEncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 		}
 		{
 			out.RawByte('{')
-			v20First := true
-			for v20Name, v20Value := range in.History {
-				if v20First {
-					v20First = false
+			v23First := true
+			for v23Name, v23Value := range in.History {
+				if v23First {
+					v23First = false
 				} else {
 					out.RawByte(',')
 				}
-				out.String(string(v20Name))
+				out.String(string(v23Name))
 				out.RawByte(':')
-				if m, ok := v20Value.(easyjson.Marshaler); ok {
+				if m, ok := v23Value.(easyjson.Marshaler); ok {
 					m.MarshalEasyJSON(out)
-				} else if m, ok := v20Value.(json.Marshaler); ok {
+				} else if m, ok := v23Value.(json.Marshaler); ok {
 					out.Raw(m.MarshalJSON())
 				} else {
-					out.Raw(json.Marshal(v20Value))
+					out.Raw(json.Marshal(v23Value))
 				}
 			}
 			out.RawByte('}')
@@ -701,11 +755,11 @@ func easyjson4086215fEncodeGithubComDeadlineTeamDtalksBotApiModelConversation(ou
 		}
 		{
 			out.RawByte('[')
-			for v21, v22 := range in.Buttons {
-				if v21 > 0 {
+			for v24, v25 := range in.Buttons {
+				if v24 > 0 {
 					out.RawByte(',')
 				}
-				(v22).MarshalEasyJSON(out)
+				(v25).MarshalEasyJSON(out)
 			}
 			out.RawByte(']')
 		}

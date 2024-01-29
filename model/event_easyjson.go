@@ -48,6 +48,10 @@ func easyjsonF642ad3eDecodeGithubComDeadlineTeamDtalksBotApiModel(in *jlexer.Lex
 			} else {
 				out.Payload = in.Interface()
 			}
+		case "conversationId":
+			out.ConversationId = string(in.String())
+		case "parentMessageId":
+			out.ParentMessageId = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -93,6 +97,26 @@ func easyjsonF642ad3eEncodeGithubComDeadlineTeamDtalksBotApiModel(out *jwriter.W
 		} else {
 			out.Raw(json.Marshal(in.Payload))
 		}
+	}
+	if in.ConversationId != "" {
+		const prefix string = ",\"conversationId\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.ConversationId))
+	}
+	if in.ParentMessageId != "" {
+		const prefix string = ",\"parentMessageId\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.ParentMessageId))
 	}
 	out.RawByte('}')
 }

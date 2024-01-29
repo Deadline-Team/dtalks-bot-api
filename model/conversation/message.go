@@ -60,6 +60,7 @@ type Message struct {
 	Labels            []*Label                      `json:"labels,omitempty"`
 	MessageReactions  []*MessageReaction            `json:"messageReactions,omitempty"`
 	Attachments       []*attachmentModel.Attachment `json:"attachments,omitempty"`
+	Links             []*Link                       `json:"links,omitempty"`
 	Read              bool                          `json:"read,omitempty"`
 	ReadDate          *time.Time                    `json:"readDate,omitempty"`
 	CallConferenceId  string                        `json:"callConferenceId,omitempty"`
