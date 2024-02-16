@@ -57,6 +57,10 @@ type BotAPI interface {
 	// RegisterCommand
 	// Метод для регистрации команд бота
 	RegisterCommand(ctx context.Context, commandsAndDescriptions map[string]string) error
+
+	// SendEvent
+	// Метод для отправки событий на сервер через WebSocket
+	SendEvent(ctx context.Context, event model.Event) error
 }
 
 type botAPI struct {
@@ -149,6 +153,16 @@ func (client *botAPI) RegisterCommand(ctx context.Context, commandsAndDescriptio
 	if response.StatusCode != 200 {
 		return errors.New(response.Status)
 	}
+	return nil
+}
+
+func (client *botAPI) SendEvent(ctx context.Context, event model.Event) error {
+	event.UserId = client.tokenInfo.UserId
+	data, err := json.Marshal(event)
+	if err != nil {
+		return err
+	}
+	client.wsClient.Send(data)
 	return nil
 }
 
