@@ -17,6 +17,7 @@ generate:
 	cd model/conversation && $(GOPATH)/bin/easyjson -all message_button.go
 	cd model/conversation && $(GOPATH)/bin/easyjson -all message_reaction.go
 	cd model/conversation && $(GOPATH)/bin/easyjson -all reaction.go
+	cd model/scheduler && $(GOPATH)/bin/easyjson -all schduled_task.go
 	cd model/user && $(GOPATH)/bin/easyjson -all user.go
 	cd model/task && $(GOPATH)/bin/easyjson -all task.go
 

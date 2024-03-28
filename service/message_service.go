@@ -37,6 +37,8 @@ import (
 	"time"
 )
 
+const schedulerBasePath = "/api/scheduler/scheduledTasks"
+
 var messageSrv MessageService
 
 type MessageService interface {
@@ -47,6 +49,10 @@ type MessageService interface {
 	// CreateMessage
 	// Метод для создания и отправки сообщений в диалог
 	CreateMessage(ctx context.Context, conversationId string, message conversationModel.Message, muted bool) (*conversationModel.Message, error)
+
+	// CreateMessageScheduled
+	// Метод для создания и отправки сообщений в диалог (отложенная доставка)
+	CreateMessageScheduled(ctx context.Context, conversationId string, message conversationModel.Message, deadline *time.Time) error
 
 	// UpdateMessage
 	// Метод для изменения сообщений в диалоге
@@ -87,6 +93,10 @@ type MessageService interface {
 	// CreateThreadMessage
 	// Метод для создания и отправки сообщений в поток
 	CreateThreadMessage(ctx context.Context, conversationId string, parentMessageId string, message conversationModel.Message, muted bool) (*conversationModel.Message, error)
+
+	// CreateThreadMessageScheduled
+	// Метод для создания и отправки сообщений в поток (отложенная доставка)
+	CreateThreadMessageScheduled(ctx context.Context, conversationId string, parentMessageId string, message conversationModel.Message, deadline *time.Time) error
 
 	// UpdateThreadMessage
 	// Метод для изменения сообщений в потоке
@@ -175,6 +185,33 @@ func (service *messageService) CreateMessage(ctx context.Context, conversationId
 	}
 
 	return &message, err
+}
+
+func (service *messageService) CreateMessageScheduled(ctx context.Context, conversationId string, message conversationModel.Message, deadline *time.Time) error {
+	scheduledTask, err := util.ParseScheduledTask(message, deadline, map[string]any{"conversationId": conversationId})
+	if err != nil {
+		return err
+	}
+
+	data, err := json.Marshal(scheduledTask)
+	if err != nil {
+		return err
+	}
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodPost, fmt.Sprintf("%s?scheduledTaskType=DelayedMessageScheduledTask", schedulerBasePath), bytes.NewReader(data))
+	if err != nil {
+		return err
+	}
+
+	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
+	if err != nil {
+		return err
+	}
+	if response.StatusCode != 201 {
+		return errors.New(response.Status)
+	}
+
+	return nil
 }
 
 func (service *messageService) UpdateMessage(ctx context.Context, conversationId string, messageId string, text string) (*conversationModel.Message, error) {
@@ -369,6 +406,33 @@ func (service *messageService) CreateThreadMessage(ctx context.Context, conversa
 	}
 
 	return &message, err
+}
+
+func (service *messageService) CreateThreadMessageScheduled(ctx context.Context, conversationId string, parentMessageId string, message conversationModel.Message, deadline *time.Time) error {
+	scheduledTask, err := util.ParseScheduledTask(message, deadline, map[string]any{"conversationId": conversationId, "parentMessageId": parentMessageId})
+	if err != nil {
+		return err
+	}
+
+	data, err := json.Marshal(scheduledTask)
+	if err != nil {
+		return err
+	}
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodPost, fmt.Sprintf("%s?scheduledTaskType=DelayedMessageScheduledTask", schedulerBasePath), bytes.NewReader(data))
+	if err != nil {
+		return err
+	}
+
+	response, err := service.httpClient.Do(request)
+	defer util.CloseChecker(response.Body)
+	if err != nil {
+		return err
+	}
+	if response.StatusCode != 201 {
+		return errors.New(response.Status)
+	}
+
+	return nil
 }
 
 func (service *messageService) UpdateThreadMessage(ctx context.Context, conversationId string, parentMessageId string, messageId string, text string) (*conversationModel.Message, error) {
