@@ -46,7 +46,7 @@ type MessageService interface {
 
 	// CreateMessage
 	// Метод для создания и отправки сообщений в диалог
-	CreateMessage(ctx context.Context, conversationId string, message conversationModel.Message) (*conversationModel.Message, error)
+	CreateMessage(ctx context.Context, conversationId string, message conversationModel.Message, muted bool) (*conversationModel.Message, error)
 
 	// UpdateMessage
 	// Метод для изменения сообщений в диалоге
@@ -86,7 +86,7 @@ type MessageService interface {
 
 	// CreateThreadMessage
 	// Метод для создания и отправки сообщений в поток
-	CreateThreadMessage(ctx context.Context, conversationId string, parentMessageId string, message conversationModel.Message) (*conversationModel.Message, error)
+	CreateThreadMessage(ctx context.Context, conversationId string, parentMessageId string, message conversationModel.Message, muted bool) (*conversationModel.Message, error)
 
 	// UpdateThreadMessage
 	// Метод для изменения сообщений в потоке
@@ -151,13 +151,13 @@ func (service *messageService) GetMessageAll(ctx context.Context, conversationId
 	return &messagePage, nil
 }
 
-func (service *messageService) CreateMessage(ctx context.Context, conversationId string, message conversationModel.Message) (*conversationModel.Message, error) {
+func (service *messageService) CreateMessage(ctx context.Context, conversationId string, message conversationModel.Message, muted bool) (*conversationModel.Message, error) {
 	data, err := json.Marshal(&message)
 	if err != nil {
 		return nil, err
 	}
 
-	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodPost, fmt.Sprintf("%s/%s/messages", conversationBasePath, conversationId), bytes.NewReader(data))
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodPost, fmt.Sprintf("%s/%s/messages?muted=%v", conversationBasePath, conversationId, muted), bytes.NewReader(data))
 	if err != nil {
 		return nil, err
 	}
@@ -345,13 +345,13 @@ func (service *messageService) GetThreadMessageAll(ctx context.Context, conversa
 	return messages, nil
 }
 
-func (service *messageService) CreateThreadMessage(ctx context.Context, conversationId string, parentMessageId string, message conversationModel.Message) (*conversationModel.Message, error) {
+func (service *messageService) CreateThreadMessage(ctx context.Context, conversationId string, parentMessageId string, message conversationModel.Message, muted bool) (*conversationModel.Message, error) {
 	data, err := json.Marshal(&message)
 	if err != nil {
 		return nil, err
 	}
 
-	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodPost, fmt.Sprintf("%s/%s/messages/%s/thread", conversationBasePath, conversationId, parentMessageId), bytes.NewReader(data))
+	request, err := util.CreateHttpRequest(ctx, service.BotBaseParam, http.MethodPost, fmt.Sprintf("%s/%s/messages/%s/thread?muted=%v", conversationBasePath, conversationId, parentMessageId, muted), bytes.NewReader(data))
 	if err != nil {
 		return nil, err
 	}
