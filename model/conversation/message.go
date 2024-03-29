@@ -69,3 +69,17 @@ type Message struct {
 	Deleted           bool                          `json:"deleted,omitempty"`
 	DeletedDate       *time.Time                    `json:"deletedDate,omitempty"`
 }
+
+func (message Message) ConvertToPoll(pollButtons []string) Message {
+	message.SubType = Poll
+	if message.Meta == nil {
+		message.Meta = model.Meta{}
+	}
+
+	var poll = make(map[string][]string)
+	for _, button := range pollButtons {
+		poll[button] = []string{}
+	}
+	message.Meta["poll"] = poll
+	return message
+}
